@@ -1,7 +1,7 @@
 // Global Reveal js style
 @import "../../node_modules/reveal.js/css/reveal.scss";
 // For code syntax highlighting
-@import "../../node_modules/highlight.js/styles/atom-one-dark.css";
+@import "../../node_modules/highlight.js/styles/atelier-heath-light.css";
 
 
 // custom theme style
@@ -12,3 +12,15 @@
 
 // animate.css
 // @import "../../node_modules/animate.css/animate.min.css";
+
+.mermaid {
+  font-size: 1em;
+  .mermaid-in {
+    display: none;
+  }
+  .mermaid-out {
+    //transform: scale(2);
+    //transform-origin: 50% 0;
+    text-align: center;
+  }
+}

@@ -1,10 +1,35 @@
 section(
   data-menu-title="Overview"
 )
- section
-  h2 Concept of observable
-  p.sided A representation of any set of values over any amount of time. This is the most basic building block of RxJS.
- section
-  h1 what are we going to do
-  li overview
-  li some RxJS internals
+  section
+    h2 Concept of observable
+    p.sided A representation of any set of values over any amount of time. This is the most basic building block of RxJS.
+
+  section
+    +js
+      include:escape overview/Observable.ts
+
+
+  section
+    h1 what are we going to do
+    li overview
+    li some RxJS internals
+
+  section
+    h1 operator
+    +mermaid.
+      graph LR
+      style O1 stroke-dasharray: 5, 5
+      style O2 stroke-dasharray: 5, 5
+
+      O1(Observable) ==> op(Operator)
+      op ==> O2(Observable)
+    p useful info
+
+
+  section
+    h1 .pipe()
+    p used to avoid spoiling Observable.prototype.
+    +js.
+      const pipe = (...mapFunctions) => mapFunctions
+        .reduce((observable, mapFunction) => mapFunction(observable));

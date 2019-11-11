@@ -31,9 +31,14 @@ module.exports = {
       {
         test: /\.pug$/,
         exclude: /node_modules/,
-        use: [
-          {loader: 'pug-loader'}
-        ]
+        use: {
+          loader: 'pug-loader'
+          , options: {
+            filters: {
+              escape: (text) => text.replace(/</g, '&lt;')
+            }
+          }
+        }
       },
       {
         test: /\.(sa|sc|c)ss$/,
