@@ -1,0 +1,78 @@
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>PRXJS</title>
+  <link href="css/fonts/fonts.css" rel="stylesheet"/>
+<link href="css/main.css" rel="stylesheet"></head>
+<body>
+<div class="reveal">
+  <div class="slides">
+    <section data-menu-title="Introduction"><section><h2>What are we going to do</h2><ul><li>RxJS source overview</li><li>Dig into RxJS internals source code</li><li>Some non-obvious behavior explainataion from source code POV</li></ul></section></section><section data-menu-title="Overview"><section><h2>Observable</h2><p class="sided">A representation of any set of values over any amount of time. This is the most basic building block of RxJS.</p><table class="big"><tr><th></th><th>SINGLE</th><th>MULTIPLE</th></tr><tr><th>Pull</th><td>Function</td><td>Iterator</td></tr><tr><th>Push</th><td>Promise</td><td>Observable</td></tr></table></section><section><div class="pre javascript"><code>export class Observable&lt;T> implements Subscribable&lt;T> {
+  public _isScalar: boolean = false;
+  source: Observable&lt;any>;
+  operator: Operator&lt;any, T>;
+
+  constructor(subscribe) {
+    this._subscribe = subscribe;
+  }
+
+  lift&lt;R>(operator: Operator&lt;T, R>): Observable&lt;R> {
+    const observable = new Observable&lt;R>();
+    observable.source = this;
+    observable.operator = operator;
+    return observable;
+  }
+
+  subscribe(sink: Observer) {
+    if (this.operator) {
+      sink.add(this.operator(this.source));
+    } else {
+      sink.add(this.source || this._subscribe(sink))
+    }
+    return sink;
+  }
+
+  _subscribe(subscriber: Subscriber): TeardownLogic {
+    const {source} = this;
+    return source && source.subscribe(subscriber);
+  }
+
+  pipe(...operations: OperatorFunction)
+}</code></div></section><section><h2>Observable class</h2><div class="mermaid" data-width="200" data-height="200" data-scale="2"><div class="mermaid-in">classDiagram
+class Observable {
+   _isScalar: boolean
+  source: Observable
+  operator: Operator
+  constructor ( SubscribeFn )
+  lift ( Operator )
+  subscribe ( Observer )
+  pipe ( Observer )
+}
+</div><div class="mermaid-out"></div></div></section><section><h2>Observable workflow</h2><div class="mermaid" data-width="600" data-height="300"><div class="mermaid-in">graph TD
+subscribeFn(Subscribe function) ==> createObservable(Observable)
+unsubscribeFn(Unsubscribe function) ==> createObservable(Observable)
+createObservable --> Observer
+</div><div class="mermaid-out"></div></div></section><section><h2>Operators</h2><!--+mermaid.--><!--  graph LR--><!--  style O1 stroke-dasharray: 5, 5--><!--  style O2 stroke-dasharray: 5, 5--><!----><!--  O1(Observable) ==> op(Operator)--><!--  op ==> O2(Observable)--><p>lift</p><p>not pure functions</p></section><section><h2>.pipe()</h2><p>used to avoid spoiling Observable.prototype.</p><div class="pre javascript"><code>const pipe = (...mapFunctions) => mapFunctions
+  .reduce((observable, mapFunction) => mapFunction(observable));</code></div></section></section><section data-menu-title="Advanced Observables"><section><h2>Obligatory Cold vs Hot</h2><p>cold > hot</p><p>hot > cold</p></section><section><div class="pre javascript"><code>const observer = (name) => ({
+  next: (value) => log(`observer[${name}].next(${value})`),
+  complete: () => log(`observer[${name}].complete()`)
+});
+
+const oneTwo$ = Rx.Observable.create((subscriber) => {
+  subscriber.next(1);
+  subscriber.next(2);
+  <span class="fragment replace-in" data-fragment-index="3"><span class="bg-warning">subscriber.complete();</span></span>
+}).pipe(share());
+
+oneTwo$.subscribe(observer('a'));
+oneTwo$.subscribe(observer('b'));</code></div><div class="fragment replace-in" data-fragment-index="1"><div class="fragment replace-out" data-fragment-index="2"><div class="pre javascript"><code>// observer[a].next(1)
+// observer[a].next(2)</code></div></div></div><div class="fragment fade-in"><div class="pre javascript"><code>// observer[a].next(1)
+// observer[a].next(2)
+// observer[a].complete()
+// observer[b].next(1)
+// observer[b].next(2)
+// observer[b].complete()</code></div></div></section><section><p>#todo explanation</p></section></section><section><div id="slot-machine-type"><input class="big"></div></section>
+  </div>
+</div>
+<script type="text/javascript" src="main.js"></script></body>
+</html>
