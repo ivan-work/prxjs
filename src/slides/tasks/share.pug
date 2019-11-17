@@ -1,0 +1,30 @@
+section
+  +js.
+    const observer = (name) => ({
+      next: (value) => log(`observer[${name}].next(${value})`),
+      complete: () => log(`observer[${name}].complete()`)
+    });
+
+    const oneTwo$ = Rx.Observable.create((subscriber) => {
+      subscriber.next(1);
+      subscriber.next(2);
+      #[span.fragment.replace-in(data-fragment-index=3): span.bg-warning subscriber.complete();]
+    }).pipe(share());
+
+    oneTwo$.subscribe(observer('a'));
+    oneTwo$.subscribe(observer('b'));
+  .fragment.replace-in(data-fragment-index=1)
+    .fragment.replace-out(data-fragment-index=2)
+      +js.
+        // observer[a].next(1)
+        // observer[a].next(2)
+  .fragment.fade-in
+    +js.
+      // observer[a].next(1)
+      // observer[a].next(2)
+      // observer[a].complete()
+      // observer[b].next(1)
+      // observer[b].next(2)
+      // observer[b].complete()
+section
+  p #todo explanation

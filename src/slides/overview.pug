@@ -1,34 +1,64 @@
 section(
-  data-menu-title="Overview"
+data-menu-title="Overview"
 )
   section
-    h2 Concept of observable
+    h2 Observable
     p.sided A representation of any set of values over any amount of time. This is the most basic building block of RxJS.
+    table.big
+      tr
+        th
+        th SINGLE
+        th MULTIPLE
+      tr
+        th Pull
+        td Function
+        td Iterator
+      tr
+        th Push
+        td Promise
+        td Observable
+
+  section
+    h2 Observable class
+    +mermaid(w=200 h=200 s=2).
+      classDiagram
+      class Observable {
+         _isScalar: boolean
+        source: Observable
+        operator: Operator
+        constructor ( SubscribeFn )
+        lift ( Operator )
+        subscribe ( Observer )
+        pipe ( Observer )
+      }
 
   section
     +js
       include:escape overview/Observable.ts
 
+  section
+    h2 Observable workflow
+    +mermaid(w=600 h=300).
+      graph TD
+      subscribeFn(Subscribe function) ==> createObservable(Observable)
+      unsubscribeFn(Unsubscribe function) ==> createObservable(Observable)
+      createObservable --> Observer
 
   section
-    h1 what are we going to do
-    li overview
-    li some RxJS internals
-
-  section
-    h1 operator
-    +mermaid.
-      graph LR
-      style O1 stroke-dasharray: 5, 5
-      style O2 stroke-dasharray: 5, 5
-
-      O1(Observable) ==> op(Operator)
-      op ==> O2(Observable)
-    p useful info
+    h2 Operators
+    //+mermaid.
+    //  graph LR
+    //  style O1 stroke-dasharray: 5, 5
+    //  style O2 stroke-dasharray: 5, 5
+    //
+    //  O1(Observable) ==> op(Operator)
+    //  op ==> O2(Observable)
+    p lift
+    p not pure functions
 
 
   section
-    h1 .pipe()
+    h2 .pipe()
     p used to avoid spoiling Observable.prototype.
     +js.
       const pipe = (...mapFunctions) => mapFunctions

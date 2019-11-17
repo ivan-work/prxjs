@@ -1,13 +1,14 @@
 mixin js
-  pre.javascript
+  .pre.javascript
     code
       block
 
 mixin mermaid
-  .mermaid
+  .mermaid(data-width = attributes.w data-height = attributes.h data-scale = attributes.s)
     .mermaid-in
       block
     .mermaid-out
 
 include slides/introduction
 include slides/overview
+include slides/observables-advanced

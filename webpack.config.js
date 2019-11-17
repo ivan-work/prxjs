@@ -76,7 +76,8 @@ module.exports = {
     new CleanWebpackPlugin({
       dry: false
       , verbose: true
-      , cleanOnceBeforeBuildPatterns: ['**/*', '!css/fonts/fonts.css']
+      , cleanStaleWebpackAssets: false
+      , cleanOnceBeforeBuildPatterns: ['**/*', '!css', '!css/fonts/**', '!.git/**']
     }),
     // new webpack.ProvidePlugin({
     //   Reveal: 'reveal.js',

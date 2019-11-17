@@ -24,12 +24,15 @@ $success: #9fc857;//#85c939;
 $pop: #ce4ad0;//#F267F1;
 $pink: #FB7FC0;
 
+$color-accent: $pink;
+$color-accent-bg: lighten($color-accent, 20%);
+$color-accent-border: darken($color-accent, 20%);
 
 // FONTS
 
 $mainFont: 	  'Raleway', sans-serif; //'Source Sans Pro', Helvetica, sans-serif;
 $headingFont: 'Raleway', sans-serif; //'Source Sans Pro', Helvetica, sans-serif;
-$headingTextShadow: none;
+$headingTextShadow: 0px 0px 4px $color-accent;
 $headingLetterSpacing: normal;
 $headingTextTransform: none;
 $headingFontWeight: 500;
@@ -42,7 +45,7 @@ $headingMargin: 0 0 $blockMargin 0;
 
 $mainFontSize: 2.5em;
 
-$heading1Size: 2.5em;
+$heading1Size: 2.0em;
 $heading2Size: 1.6em;
 $heading3Size: 1.3em;
 $heading4Size: 1.0em;
@@ -70,10 +73,5 @@ $borderSidedThickness: 10px;
 $borderRadius: 15px;
 
 // OTHERS
-
-$color-accent: $pink;
-$color-accent-bg: lighten($color-accent, 20%);
-$color-accent-border: darken($color-accent, 20%);
-
 
 

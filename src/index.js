@@ -9,49 +9,77 @@ import './reveal-plugins/print-css.js'
 import './reveal-plugins/reveal-highlight.js'
 
 import hljs from 'highlight.js/lib/highlight.js';
+import slotMachineType from './slides/tasks/slot-machine-type';
 
 hljs.registerLanguage('javascript', require(`highlight.js/lib/languages/javascript`));
-hljs.initHighlightingOnLoad();
-
-import mermaid from 'mermaid'
-
-window.mermaid = mermaid;
-console.log(window.mermaid);
-
-mermaid.initialize({
-  startOnLoad: false
-  // , diagramMarginX: 1000
-  // , diagramMarginY: 1000
-  // , height: 20
-  // , width: 500
-  // , noteMargin: 100
-  // , useMaxWidth: true
-  // , sequence: {
-  //   boxMargin: 500
-  //   , diagramMarginX: 1000
-  //   , diagramMarginY: 1000
-  //   , width: 500
-  // }
-  // , gantt: {}
-});
-
-const htmlUnescape = e => new DOMParser().parseFromString(e.innerHTML, 'text/html').documentElement.textContent;
-
 document.addEventListener('DOMContentLoaded', (event) => {
-  // Reveal.addEventListener('slidechanged', function (event) {
-    document.querySelectorAll('.mermaid')
-      .forEach(element => {
-        const input = element.querySelector('.mermaid-in');
-        const output = element.querySelector('.mermaid-out');
-        const insertSvg = (svg, bindFunctions) => {
-          output.innerHTML = svg;
-          bindFunctions && bindFunctions(output);
-      };
-
-        mermaid.render('test', htmlUnescape(input), insertSvg, output);
-        const svg = output.querySelector('svg');
-        // svg.setAttribute('width', 2 * +svg.getAttribute('width'));
-        // svg.setAttribute('height', 2 * +svg.getAttribute('height'));
-      });
-  // });
+  document.querySelectorAll('.pre code').forEach((block) => {
+    hljs.highlightBlock(block);
+  });
+  slotMachineType();
 });
+
+import './plugins/mermaid';
+
+import * as Rx from 'rxjs';
+import * as op from 'rxjs/operators';
+
+const observer = (name) => ({
+  next: (value) => console.log(`observer[${name}].next(${value})`),
+  complete: () => console.log(`observer[${name}].complete()`)
+});
+
+let ott$id = 0;
+let sub$;
+const ott$ = Rx.Observable.create((subscriber) => {
+  sub$ = subscriber;
+  const id = ott$id++;
+  console.log(`ott$${id} subscribed`);
+  subscriber.next(1);
+  subscriber.next(2);
+  // subscriber.next(3);
+  // subscriber.complete();
+  return () => {
+    console.log(`ott${id} unsubscribed`);
+  }
+}).pipe(op.publish());
+
+const ffs$ = Rx.Observable.create((subscriber) => {
+  console.log('ffs$ subscribed');
+  subscriber.next(4);
+  subscriber.next(5);
+  subscriber.next(6);
+  subscriber.complete();
+  return () => {
+    console.log('ffs$ unsubscribed');
+  }
+});
+
+ott$.subscribe(observer('a'));
+
+ott$.subscribe(observer('b'));
+
+ott$.connect();
+
+ott$.subscribe(observer('c'));
+
+setTimeout(() => {
+  sub$.complete();
+}, 2000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
