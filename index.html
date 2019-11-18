@@ -7,53 +7,73 @@
 <body>
 <div class="reveal">
   <div class="slides">
-    <section data-menu-title="Introduction"><section><h2>What are we going to do</h2><ul><li>RxJS source overview</li><li>Dig into RxJS internals source code</li><li>Some non-obvious behavior explainataion from source code POV</li></ul></section></section><section data-menu-title="Overview"><section><h2>Observable</h2><p class="sided">A representation of any set of values over any amount of time. This is the most basic building block of RxJS.</p><table class="big"><tr><th></th><th>SINGLE</th><th>MULTIPLE</th></tr><tr><th>Pull</th><td>Function</td><td>Iterator</td></tr><tr><th>Push</th><td>Promise</td><td>Observable</td></tr></table></section><section><div class="pre javascript"><code>export class Observable&lt;T> implements Subscribable&lt;T> {
-  public _isScalar: boolean = false;
-  source: Observable&lt;any>;
-  operator: Operator&lt;any, T>;
+    <section data-menu-title="Introduction"><section data-timing="30"><h1>Observable concept</h1><aside class="notes"><p>Hello! Today I'd like to talk about Observables and RxJS.</p><p>I hope everybody knows about it, because this is not an overview talk.</p><p>Instead, I'll try to help you intuitively understand how RxJS works so you'll feel more comfortable using it.</p></aside></section><section data-timing="30"><h2>The plan</h2><ul class="big"><li class="fragment">Short overview</li><li class="fragment">Rx.Observable structure and flow</li><li class="fragment">Dispel some magic</li></ul><aside class="notes"><p>So, here's what we're going to do</p><p>Short overview of what is Observable and RxJS to make sure everyone is on the same page.</p><p>Next we'll look how Rx.Observable looks like in the source code</p><p>Explain some non-obvious behavior examples</p></aside></section></section><section><section data-menu-title="Overview"><h2>Observer pattern sequence</h2><p class="sided-no-bg smaller">In the Observer pattern, the <b>subject</b> maintains a list of its dependents, called <b>observers</b>, and notifies them automatically of any state changes</p><div class="mermaid" data-width="650" data-height="400" data-scale="1"><div class="mermaid-in">sequenceDiagram
+  participant S as Subject
+  participant o1 as Observer 1
+  participant o2 as Observer 2
 
-  constructor(subscribe) {
-    this._subscribe = subscribe;
-  }
+  o1 ->> S: attach()
+  activate o1
+  o2 ->> S: attach()
+  activate o2
+  Note over S: something happens
+  S ->> o1: notify()
+  deactivate o1
+  S ->> o2: notify()
+  deactivate o2</div><div class="mermaid-out"></div></div><aside class="notes"><p>Here we have basic Observable pattern I copied from wiki.</p><p>#todo read quote?</p><p>There's a subject, and two observers. They attach to the subject, then something happens and after that subject notifies them</p><p>now let's look at Rx flow</p></aside></section><section><h2>ReactiveX sequence</h2><div class="mermaid" data-width="650" data-height="400" data-scale="1"><div class="mermaid-in">sequenceDiagram
+  participant S as Observable
+  participant o1 as Observer 1
+  participant o2 as Observer 2
 
-  lift&lt;R>(operator: Operator&lt;T, R>): Observable&lt;R> {
-    const observable = new Observable&lt;R>();
-    observable.source = this;
-    observable.operator = operator;
-    return observable;
-  }
+  o1 ->> S: subscribe()
+  activate o1
+  o2 ->> S: subscribe()
+  activate o2
+  Note over S: value
+  S ->> o1: next()
+  deactivate o1
+  S ->> o2: next()
+  deactivate o2</div><div class="mermaid-out"></div></div><aside class="notes"><p>Here is the Rx flow and as we see - in general, it's the same</p><p>I omitted complete events and operators, we will get to that later</p></aside></section><section><h2>Push/Pull</h2><div class="center fragment replace-in-out" data-fragment-index="1"><img src="img/producer-consumer.png" width="600"></div><table class="smallest fragment" data-fragment-index="2"><tr><th></th><th><div class="fragment" data-fragment-index="2">Example</div></th><th class="red"><div class="fragment" data-fragment-index="2">Producer</div></th><th class="blue"><div class="fragment" data-fragment-index="2">Consumer</div></th></tr><tr class="fragment" data-fragment-index="2"><th>Pull</th><td><code class="single-line"><span class="blue">data</span> = <span class="red">getData()</span>;</code></td><td class="red">Passive</td><td class="blue">Active</td></tr><tr class="fragment" data-fragment-index="3"><th>Push</th><td><code class="single-line"><span class="red">dataProducer()</span></code><code class="single-line">  .produce(<span class="blue">reactToData</span>);</code></td><td class="red">Active</td><td class="blue">Passive</td></tr></table><aside class="notes"><p>Ok, but what is the concept of Observable? Let's get back a bit and talk about push versus pull approach.</p><p>#todo Ask Audience?</p><p>Usually we can divide code logic to Producers and Consumers. So we have a value and it flows from Producer to Consumer (1)</p><p>We can make it work with two different approaches - Pull and Push.(2)z</p><p>2. Pull is a traditional, imperative approach = we request or pull data when we need it</p><p>Producer is passive here - it produces data when requested</p><p>And Consumer is active - it decides when data is requested</p><p>3. In Push systems, the Producer determines when to send data to the Consumer, it's Active</p><p>The Consumer is unaware of when it will receive that data - it's Passive</p><p>Ok, but what if we have not single, but multiple values?</p></aside></section><section data-menu-title="Push/Pull over single/multiple values"><h3>Push/pull over single/multiple values</h3><!--p.sided-no-bg.fragment.replace-in(data-fragment-index=4) #[em Pull] and #[em Push] are two different protocols that describe how a data #[em Producer] can communicate with a data #[em Consumer].--><table class="small"><tr><th></th><th>Single</th><th><div class="fragment" data-fragment-index="3">Multiple</div></th></tr><tr><th>Pull</th><td><div class="fragment" data-fragment-index="1">Function&lt;value&gt;</div></td><td><div class="fragment" data-fragment-index="3">Iterator&lt;values&gt;</div></td></tr><tr><th>Push</th><td><div class="fragment" data-fragment-index="2">Promise&lt;value&gt;</div></td><td><div class="fragment" data-fragment-index="4">Observables&lt;values&gt;</div></td></tr></table><aside class="notes"><p>So we have here Push and Pull approaches. Let's start from single value - to do something with pull approach you have to just call function</p><p>1. In push approach you can use Promise 2.</p><p>For pulling multiple values we can use iterator</p><p>And finally for pushing multiple values we can use Observables</p><p>There we come to Rx</p></aside></section><section><h2>Rx.Observable</h2><p class="sided-no-bg fragment fade-in-then-semi-out">A representation of any set of values over any amount of time. This is the most basic building block of RxJS</p><div class="fragment fade-in-then-out small"><p>Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable. The output Observables emits values only from the most recently emitted instance of innerObservable.</p><p class="right small">© .switchMapTo API documentation</p></div><aside class="notes"><p>Behold, here's Rx.Observable</p><p>I love this quote, it helps me to keep sanity</p></aside></section></section><section><section><h2>Practice!</h2><div class="fragment replace-in-out"><div class="pre javascript"><code>// traditional
+document.addEventListener('keydown', () => console.log('Key down!'));
+// reactive
+Rx.Observable.fromEvent(document, 'keydown')
+  .subscribe(() => console.log('Key down!'));</code></div></div><div class="fragment fade-in"><div class="pre javascript"><code>const input$ = Rx.fromEvent(document, 'keydown')
+  .pipe(pluck('key'), share());
 
-  subscribe(sink: Observer) {
-    if (this.operator) {
-      sink.add(this.operator(this.source));
-    } else {
-      sink.add(this.source || this._subscribe(sink))
-    }
-    return sink;
-  }
+input$.subscribe(key => {
+  console.log('key down!')
+});
 
-  _subscribe(subscriber: Subscriber): TeardownLogic {
-    const {source} = this;
-    return source && source.subscribe(subscriber);
-  }
+input$.pipe(
+  bufferCount(5, 1)
+  , filter(buffered => buffered.join('') === 'param')
+)
+  .subscribe(e => {
+    console.log('PARAM PAM PAM!')
+  })</code></div></div></section><aside class="notes"><p>now that we know all of this, we can answer question I asked two slides ago - What is the concept of Observable?</p><p>given all these Push/Pull talks we can say it is "A way to iterate over values by Push approach"</p><p>but to make more sense, let's rephrase it</p><p>I'd say Observables are the way of organizing series of events</p><p>Here I'd like to addess one thing - many introductions to Rx show this code 1. as example of Rx benefits</p></aside><section data-capture="1"><div id="parampampam"><p>type 'param':</p><div id="pam"></div><div id="pampam"></div></div></section><section><div class="pre javascript"><code>const pam = document.getElementById('pam');
+const pampam = document.getElementById('pampam');
+const input$ = Rx.fromEventPattern(
+  handler => document.addEventListener('keydown', handler, true)
+  , handler => document.removeEventListener('keydown', handler)
+).pipe(
+  op.filter(() => Reveal.getCurrentSlide().getAttribute('data-capture'))
+  , op.filter(({keyCode}) => 65 <= keyCode && keyCode <= 90)
+  , op.tap(e => e.stopImmediatePropagation())
+  , op.pluck('key')
+  , op.share()
+);
 
-  pipe(...operations: OperatorFunction)
-}</code></div></section><section><h2>Observable class</h2><div class="mermaid" data-width="200" data-height="200" data-scale="2"><div class="mermaid-in">classDiagram
-class Observable {
-   _isScalar: boolean
-  source: Observable
-  operator: Operator
-  constructor ( SubscribeFn )
-  lift ( Operator )
-  subscribe ( Observer )
-  pipe ( Observer )
-}
-</div><div class="mermaid-out"></div></div></section><section><h2>Observable workflow</h2><div class="mermaid" data-width="600" data-height="300"><div class="mermaid-in">graph TD
-subscribeFn(Subscribe function) ==> createObservable(Observable)
-unsubscribeFn(Unsubscribe function) ==> createObservable(Observable)
-createObservable --> Observer
-</div><div class="mermaid-out"></div></div></section><section><h2>Operators</h2><!--+mermaid.--><!--  graph LR--><!--  style O1 stroke-dasharray: 5, 5--><!--  style O2 stroke-dasharray: 5, 5--><!----><!--  O1(Observable) ==> op(Operator)--><!--  op ==> O2(Observable)--><p>lift</p><p>not pure functions</p></section><section><h2>.pipe()</h2><p>used to avoid spoiling Observable.prototype.</p><div class="pre javascript"><code>const pipe = (...mapFunctions) => mapFunctions
-  .reduce((observable, mapFunction) => mapFunction(observable));</code></div></section></section><section data-menu-title="Advanced Observables"><section><h2>Obligatory Cold vs Hot</h2><p>cold > hot</p><p>hot > cold</p></section><section><div class="pre javascript"><code>const observer = (name) => ({
+input$.subscribe(key => {
+  createFadingElement(pam, key);
+});
+
+input$.pipe(
+  op.bufferCount(5, 1)
+  , op.filter(buffered => buffered.join('') === 'param')
+)
+  .subscribe(e => {
+    createFadingElement(pampam, 'PAM-PAM!');
+  })</code></div></section></section><section data-menu-title="Advanced Observables"><section><h2>Obligatory Cold vs Hot</h2><p>cold > hot</p><p>hot > cold</p><p>real life examples</p></section><section><div class="pre javascript"><code>const observer = (name) => ({
   next: (value) => log(`observer[${name}].next(${value})`),
   complete: () => log(`observer[${name}].complete()`)
 });
@@ -71,7 +91,13 @@ oneTwo$.subscribe(observer('b'));</code></div><div class="fragment replace-in" d
 // observer[a].complete()
 // observer[b].next(1)
 // observer[b].next(2)
-// observer[b].complete()</code></div></div></section><section><p>#todo explanation</p></section></section><section><div id="slot-machine-type"><input class="big"></div></section>
+// observer[b].complete()</code></div></div></section><section><p>#todo explanation</p></section></section><!--include tasks/slot-machine-type.pugsection
+  +js.
+    const button = document.querySelector('button');
+    button.addEventListener('click', () => console.log('Clicked!'));
+  +js.
+    var button = document.querySelector('button');
+    Rx.Observable.fromEvent(button, 'click').subscribe(() => console.log('Clicked!'));-->
   </div>
 </div>
 <script type="text/javascript" src="main.js"></script></body>
