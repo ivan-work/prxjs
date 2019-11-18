@@ -3,12 +3,13 @@ import mermaid from 'mermaid'
 window.mermaid = mermaid;
 
 mermaid.initialize({
-  startOnLoad: false
+  startOnLoad: false,
+  // htmlLabels: false
 });
 
 const htmlUnescape = e => new DOMParser().parseFromString(e.innerHTML, 'text/html').documentElement.textContent;
 
-const mermaidRender = container => container.querySelectorAll('.mermaid')
+const mermaidRender = slide => slide.querySelectorAll('.mermaid')
   .forEach((element, idx) => {
     const input = element.querySelector('.mermaid-in');
     const output = element.querySelector('.mermaid-out');
@@ -30,9 +31,18 @@ const mermaidRender = container => container.querySelectorAll('.mermaid')
     }
   });
 
+
+const adjustSlide = (slide) => {
+  const mermaids = slide.querySelectorAll('.mermaid');
+  if (mermaids.length > 0) {
+    slide.style.top = 0;
+  }
+};
+
 document.addEventListener('DOMContentLoaded', (e) => {
   mermaidRender(document);
   Reveal.addEventListener('slidechanged', function (event) {
-    mermaidRender(event.currentSlide);
+    // mermaidRender(event.currentSlide);
+    adjustSlide(event.currentSlide);
   });
 });

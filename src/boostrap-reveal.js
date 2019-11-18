@@ -10,6 +10,7 @@ Reveal.initialize({
   hash: true,
   slideNumber: true,
   fragmentInURL: true,
+  defaultTiming: 60,
   menu: {
     path: 'css/lib', // where the menu.css will be found
     // Specifies which side of the presentation the menu will

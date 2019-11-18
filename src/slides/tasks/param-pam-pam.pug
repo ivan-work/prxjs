@@ -1,0 +1,65 @@
+section
+  section
+    h2 Practice!
+    .fragment.replace-in-out
+      +js.
+        // traditional
+        document.addEventListener('keydown', () => console.log('Key down!'));
+        // reactive
+        Rx.Observable.fromEvent(document, 'keydown')
+          .subscribe(() => console.log('Key down!'));
+    .fragment.fade-in
+      +js.
+        const input$ = Rx.fromEvent(document, 'keydown')
+          .pipe(pluck('key'), share());
+
+        input$.subscribe(key => {
+          console.log('key down!')
+        });
+
+        input$.pipe(
+          bufferCount(5, 1)
+          , filter(buffered => buffered.join('') === 'param')
+        )
+          .subscribe(e => {
+            console.log('PARAM PAM PAM!')
+          })
+  aside.notes
+    p now that we know all of this, we can answer question I asked two slides ago - What is the concept of Observable?
+    p given all these Push/Pull talks we can say it is "A way to iterate over values by Push approach"
+    p but to make more sense, let's rephrase it
+    p I'd say Observables are the way of organizing series of events
+    p Here I'd like to addess one thing - many introductions to Rx show this code 1. as example of Rx benefits
+
+  section(data-capture=1)
+    #parampampam
+      p type 'param':
+      div#pam
+      div#pampam
+
+  section
+      +js.
+        const pam = document.getElementById('pam');
+        const pampam = document.getElementById('pampam');
+        const input$ = Rx.fromEventPattern(
+          handler => document.addEventListener('keydown', handler, true)
+          , handler => document.removeEventListener('keydown', handler)
+        ).pipe(
+          op.filter(() => Reveal.getCurrentSlide().getAttribute('data-capture'))
+          , op.filter(({keyCode}) => 65 <= keyCode && keyCode <= 90)
+          , op.tap(e => e.stopImmediatePropagation())
+          , op.pluck('key')
+          , op.share()
+        );
+
+        input$.subscribe(key => {
+          createFadingElement(pam, key);
+        });
+
+        input$.pipe(
+          op.bufferCount(5, 1)
+          , op.filter(buffered => buffered.join('') === 'param')
+        )
+          .subscribe(e => {
+            createFadingElement(pampam, 'PAM-PAM!');
+          })

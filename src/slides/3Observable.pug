@@ -1,23 +1,4 @@
-section(
-data-menu-title="Overview"
-)
-  section
-    h2 Observable
-    p.sided A representation of any set of values over any amount of time. This is the most basic building block of RxJS.
-    table.big
-      tr
-        th
-        th SINGLE
-        th MULTIPLE
-      tr
-        th Pull
-        td Function
-        td Iterator
-      tr
-        th Push
-        td Promise
-        td Observable
-
+section
   section
     h2 Observable class
     +mermaid(w=200 h=200 s=2).
@@ -32,9 +13,11 @@ data-menu-title="Overview"
         pipe ( Observer )
       }
 
+
   section
     +js
       include:escape overview/Observable.ts
+
 
   section
     h2 Observable workflow
@@ -43,6 +26,7 @@ data-menu-title="Overview"
       subscribeFn(Subscribe function) ==> createObservable(Observable)
       unsubscribeFn(Unsubscribe function) ==> createObservable(Observable)
       createObservable --> Observer
+
 
   section
     h2 Operators
@@ -55,6 +39,8 @@ data-menu-title="Overview"
     //  op ==> O2(Observable)
     p lift
     p not pure functions
+
+
 
 
   section

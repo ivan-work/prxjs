@@ -89,9 +89,10 @@ module.exports = {
       // {from: 'src/index.html', to: '.'},
       // {from: 'node_modules/reveal.js/css/*.css', to: 'css/[name].css'},
       // {from: 'node_modules/reveal.js/css/theme/white.css', to: 'css/theme.css'},
+      {from: 'src/img', to: 'img'},
       {from: 'node_modules/reveal.js-menu/menu.css', to: 'css/lib/menu.css'},
       // speaker note base window
-      // { from: 'node_modules/reveal.js/plugin/notes/notes.html', to: 'lib/js/reveal.js-dependencies/notes.html' },
+      { from: 'node_modules/reveal.js/plugin/notes/notes.html', to: 'notes.html' },
       // any files in content
       // { context: 'src/content',
       //   from: '**/*',

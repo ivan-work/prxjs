@@ -9,4 +9,12 @@ data-menu-title="Advanced Observables"
 
   include tasks/share
 
-include tasks/slot-machine-type
+//include tasks/slot-machine-type.pug
+
+  section
+    +js.
+      const button = document.querySelector('button');
+      button.addEventListener('click', () => console.log('Clicked!'));
+    +js.
+      var button = document.querySelector('button');
+      Rx.Observable.fromEvent(button, 'click').subscribe(() => console.log('Clicked!'));

@@ -13,7 +13,10 @@ $colorsList: (
         white: $white,
         black: $black,
         orange: $orange,
-        pink: $pink
+        pink: $pink,
+        blue: $info,
+        green: $success,
+        red: $danger
 );
 
 .persistent {
@@ -289,6 +292,10 @@ table.center tfoot td {
 
 .sf {
   font-family: sans-serif !important;
+}
+
+.single-line {
+  white-space: nowrap;
 }
 
 section {

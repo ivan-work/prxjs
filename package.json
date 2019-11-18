@@ -6,8 +6,8 @@
   "scripts": {
     "start": "",
     "build": "webpack --mode production",
-    "build:dev": "webpack --mode development",
-    "start:dev": "webpack-dev-server --mode development",
+    "dev:build": "webpack --mode development",
+    "dev:start": "webpack-dev-server --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
