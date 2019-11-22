@@ -1,0 +1,87 @@
+section
+  section
+    h2 Push/Pull
+    .center.fragment.replace-in-out(data-fragment-index=1): img(src='img/producer-consumer.png' width=600)
+    table.smaller.fragment(data-fragment-index=2)
+      tr
+        th
+        th: .fragment(data-fragment-index=2) Example
+        th: .fragment(data-fragment-index=2) Producer
+        th: .fragment(data-fragment-index=2) Consumer
+      tr.fragment(data-fragment-index=2)
+        th Pull
+        td: code.single-line #[span.red data] = #[span.blue getData()];
+        td.blue Passive
+        td.red Active
+      tr.fragment(data-fragment-index=3)
+        th Push
+        td
+          code.single-line.fragment.replace-in-out(data-fragment-index=3) #[span.red dataProducer()]
+          code.single-line.fragment.replace-in(data-fragment-index=4) dataProducer() #[em.muted //]#[em.red internal stuff]
+          br
+          code.single-line   .onData(#[span.blue reactToData]);
+        td.red Active
+        td.blue Passive
+    .fragment(data-fragment-index=5).smaller
+      br
+      code.
+       anyPromise() #[em.muted //]#[em.red resolve()]
+       #[br]
+       &nbsp;&nbsp;.then((data) => #[span.blue doSomething](data))
+    aside.notes
+      p Ok, but what is the concept of Observable? Let's get back a bit and talk about push versus pull approach.
+      p #todo Ask Audience?
+      p We can split code logic to Producers and Consumers.
+      p 1. So we have a value and it flows from Producer to Consumer
+      p We can make it work with two different approaches - Pull and Push.
+      p 2. Pull is a traditional, imperative approach = we request or pull data when we need it
+      p Producer is passive here - it produces data when requested
+      p And Consumer is active - it decides when data is requested
+      p 3. In Push systems, the Producer determines when to send data to the Consumer, it's Active
+      p The Consumer is unaware of when it will receive that data - it's Passive
+      p Just to not confuse you - calling dataProducer() is not "requesting a data"
+       | - the point that producer determines itself whenever to call the callback, so actually it should look like this 4.
+      p 5. A good example of Push-based approach is a Promise
+      p Ok, but what if we have not single, but multiple values?
+
+  section(data-menu-title="Push/Pull over single/multiple values")
+    h3 Push/pull over single/multiple values
+    //p.sided-no-bg.fragment.replace-in(data-fragment-index=4) #[em Pull] and #[em Push] are two different protocols that describe how a data #[em Producer] can communicate with a data #[em Consumer].
+    table.small
+      tr
+        th
+        th Single
+        th: .fragment(data-fragment-index=3) Multiple
+      tr
+        th Pull
+        td: .fragment(data-fragment-index=1) Function#{'<value>'}
+        td: .fragment(data-fragment-index=3) Iterator#{'<values>'}
+      tr
+        th Push
+        td: .fragment(data-fragment-index=2) Promise#{'<value>'}
+        td: .fragment(data-fragment-index=4) Observables#{'<values>'}
+    aside.notes
+      p So we have here Push and Pull approaches. Let's start from single value - to do something with pull approach you have to just call function
+      p 1. In push approach you can use Promise 2.
+      p For pulling multiple values we can use iterator
+      p And finally for pushing multiple values we can use Observables
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

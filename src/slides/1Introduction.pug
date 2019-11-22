@@ -2,16 +2,34 @@ section(
   data-menu-title="Introduction"
 )
  section(data-timing=30)
-  h1 Observable concept
+  h1 Anatomy of Rx
   aside.notes
     p Hello! Today I'd like to talk about Observables and RxJS.
     p I hope everybody knows about it, because this is not an overview talk.
     p Instead, I'll try to help you intuitively understand how RxJS works so you'll feel more comfortable using it.
+    p
+
+ section(data-timing=30)
+  h2 Why?
+  ul
+    li.fragment .map and .subscribe are fun!
+    li.fragment reading this is not fun:
+      code.hljs.smaller.
+        Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable.
+
+        The output Observables emits values only from the most recently emitted instance of innerObservable.
+
+        #[.right.small © .switchMapTo API documentation]
+
+  aside.notes
+    p the point of this presentation is that I think it's hard to fully utilize Rx without knowledge of how it works internally
+    p 2. Yeah, it's all fine when u just .map and .subscribe
+    p 3. However reading this is not fun and I don't think marble diagrams help a lot
 
  section(data-timing=30)
   h2 The plan
   ul.big
-    li.fragment Short overview
+    li.fragment Overview
     li.fragment Rx.Observable structure and flow
     li.fragment Dispel some magic
   aside.notes

@@ -1,7 +1,45 @@
 section
   section
+   h2 Rx.Observable
+   p.sided-no-bg.fragment.fade-in-then-semi-out A representation of any set of values over any amount of time. This is the most basic building block of RxJS
+   .fragment.fade-in-then-out
+     //+js.
+     //  p Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable. The output Observables emits values only from the most recently emitted instance of innerObservable.
+     //  p.right.small © .switchMapTo API documentation
+     code.hljs.smaller.
+       Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable.
+
+       The output Observables emits values only from the most recently emitted instance of innerObservable.
+
+       #[.right.small © .switchMapTo API documentation]
+   aside.notes
+     p Ok, after we saw what is the point of observables, let's dive deeper into ReactiveX
+     p The most basic building block of Rx is, of course, Observable - A representation of any set of values over any amount of time.
+     p #todo get another example? remove?
+     p 1. I advise you to remember it well.
+     p If you ever feel dizzy reading this - you may remember than Observable is just a set of values over time and starting from that ground work your way to parse this
+     p Let's start from basics
+  section
+    h2 Observable workflow
+    +mermaid(w=600 h=300).
+      graph TD
+      subscribeFn(Subscribe function) ==> createObservable(Observable)
+      unsubscribeFn(Unsubscribe function) ==> createObservable(Observable)
+      createObservable --> Observer
+  section
     h2 Observable class
-    +mermaid(w=200 h=200 s=2).
+    +js.
+      class Rx.Observable {
+        private _isScalar: boolean
+        private source: Observable
+        private operator: Operator
+
+        constructor(subscribeFunction) {...}
+        lift(operator) {...}
+        subscribe(observer) {...}
+        pipe(observer) {...}
+      }
+    //+mermaid(w=200 h=200 s=2).
       classDiagram
       class Observable {
          _isScalar: boolean
@@ -12,21 +50,15 @@ section
         subscribe ( Observer )
         pipe ( Observer )
       }
+    aside.notes
+      p Let's take a look what is this "basic building block".
+      p I've tried to distill this as much as possible and here's what I have.
+      p Let's start from constructor
 
 
   section
     +js
       include:escape overview/Observable.ts
-
-
-  section
-    h2 Observable workflow
-    +mermaid(w=600 h=300).
-      graph TD
-      subscribeFn(Subscribe function) ==> createObservable(Observable)
-      unsubscribeFn(Unsubscribe function) ==> createObservable(Observable)
-      createObservable --> Observer
-
 
   section
     h2 Operators

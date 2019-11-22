@@ -13,7 +13,7 @@ import './slides/tasks/param-pam-pam';
 
 hljs.registerLanguage('javascript', require(`highlight.js/lib/languages/javascript`));
 document.addEventListener('DOMContentLoaded', (event) => {
-  document.querySelectorAll('.pre code').forEach((block) => {
+  document.querySelectorAll('.pre.javascript code').forEach((block) => {
     hljs.highlightBlock(block);
   });
 });
@@ -31,6 +31,7 @@ const observer = (name) => ({
 let ob$id = 0;
 const ob$ = Rx.Observable.create((subscriber) => {
   const id = ob$id++;
+  console.log(`ott${id} subscribed`);
   subscriber.next(1);
   subscriber.complete();
   return () => {
@@ -38,7 +39,47 @@ const ob$ = Rx.Observable.create((subscriber) => {
   }
 });
 
-ob$.subscribe(observer('a'));
+const ob2$ = Rx.Observable.create((subscriber) => {
+  const id = ob$id++;
+  console.log(`ott${id} subscribed`);
+  subscriber.next(1);
+  subscriber.complete();
+  return () => {
+    console.log(`ott${id} unsubscribed`);
+  }
+});
+
+// ob$.source = ob2$;
+//
+// console.log(ob$, ob$._subscribe);
+// console.log(ob2$, ob2$._subscribe);
+//
+// ob$.subscribe(observer('a'));
+
+const ob3$ = Rx.Observable.create((subscriber) => {
+  const id = ob$id++;
+  console.log(`ott${id} subscribed`);
+  const handler = () => {
+    console.log(`handler of ${id} is clicked`);
+    subscriber.next(`ott${id} clicked`)
+  };
+  document.addEventListener('click', handler);
+  return () => {
+    console.log(`ott${id} unsubscribed`);
+    document.removeEventListener('click', handler);
+  }
+});
+const subscription = ob3$.subscribe(observer('clicker'));
+const subscription2 = ob3$.subscribe(observer('double clicker'));
+
+
+let i = 0;
+document.addEventListener('click', () => {
+  console.log(i);
+  if (++i > 4) {
+    subscription.unsubscribe();
+  }
+});
 
 // let ott$id = 0;
 // let sub$;

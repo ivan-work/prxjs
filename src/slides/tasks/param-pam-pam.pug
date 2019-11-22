@@ -1,65 +1,102 @@
 section
-  section
-    h2 Practice!
-    .fragment.replace-in-out
+  section(data-menu-title='Observable')
+    h3 The concept of Observable
+    .fragment.sided-no-bg(data-fragment-index=1) Observables are the way of organizing series of events
+    .fragment.replace-in-out(data-fragment-index=2).bigger
       +js.
         // traditional
-        document.addEventListener('keydown', () => console.log('Key down!'));
+        document.addEventListener('keydown', () =>
+          console.log('Key down!'));
         // reactive
         Rx.Observable.fromEvent(document, 'keydown')
           .subscribe(() => console.log('Key down!'));
-    .fragment.fade-in
+    .fragment.fade-in(data-fragment-index=3).big
       +js.
         const input$ = Rx.fromEvent(document, 'keydown')
-          .pipe(pluck('key'), share());
+          #[.fragment.replace-in-out(data-fragment-index=3) .pipe(pluck('key'), share());]#[.fragment.replace-in(data-fragment-index=4) .pipe(#[span.red pluck('key')], #[span.red share()]);]
 
-        input$.subscribe(key => {
+        #[span.fragment.replace-out(data-fragment-index=5) input$.subscribe]#[span.fragment.replace-in(data-fragment-index=5).blue input$.subscribe](key => {
           console.log('key down!')
         });
 
-        input$.pipe(
+        #[span.fragment.replace-out(data-fragment-index=5) input$]#[span.fragment.replace-in(data-fragment-index=5).blue input$].pipe(
           bufferCount(5, 1)
           , filter(buffered => buffered.join('') === 'param')
-        )
-          .subscribe(e => {
-            console.log('PARAM PAM PAM!')
-          })
-  aside.notes
-    p now that we know all of this, we can answer question I asked two slides ago - What is the concept of Observable?
-    p given all these Push/Pull talks we can say it is "A way to iterate over values by Push approach"
-    p but to make more sense, let's rephrase it
-    p I'd say Observables are the way of organizing series of events
-    p Here I'd like to addess one thing - many introductions to Rx show this code 1. as example of Rx benefits
+        )#[span.fragment.replace-out(data-fragment-index=5) .subscribe]#[span.fragment.replace-in(data-fragment-index=5).blue .subscribe](_ => {
+          console.log('PARAM PAM PAM!')
+        })
+    aside.notes
+      p now that we know all of this, we can answer question I asked before - What is the concept of Observable?
+      p given all these Push/Pull talks we can say it is "A way to iterate over values by Push approach"
+      p but to make more sense, let's rephrase it
+      p I'd say Observables are the way of organizing series of events 1.
+      p Here I'd like to address one thing - many introductions to Rx show this code 2. as example of Rx benefits
+      p I think that this is a bit misleading, because there's no real benefit or organisation going on when using Observables just to subscribe for document events
+      p If i was writing introduction to observable, I'd give this code as example
+      p 3. Yes, it's a bit overcomplicated, but here we have all the main points
+      p 4. We actually show that we can map observables
+      p 5. Also we show that with observables, we can "Organize multiple events" - if we need keypress event to do two separate things, we can do it easily
+      p Let's look at this example live
 
   section(data-capture=1)
-    #parampampam
+    h2 Practice!
+    +js.
+      const input$ = Rx.fromEvent(document, 'keydown')
+       .pipe(pluck('key'), share());
+
+      input$.subscribe(key => outputNicely(key));
+
+      input$.pipe(
+        bufferCount(5, 1)
+        , filter(buffered => buffered.join('') === 'param')
+      ).subscribe(keys => outputNicely('PAM PAM'))
+    #parampampam(style='height: 200px')
       p type 'param':
       div#pam
       div#pampam
+    aside.notes
+      p So we have this code and we want to output nicely any key presses #type
+      p and we want it to type "pam pam" whenever we type 'param'
 
-  section
+  section(data-menu-title='#todo possibly remove')
+    .small
       +js.
-        const pam = document.getElementById('pam');
-        const pampam = document.getElementById('pampam');
-        const input$ = Rx.fromEventPattern(
-          handler => document.addEventListener('keydown', handler, true)
-          , handler => document.removeEventListener('keydown', handler)
-        ).pipe(
-          op.filter(() => Reveal.getCurrentSlide().getAttribute('data-capture'))
-          , op.filter(({keyCode}) => 65 <= keyCode && keyCode <= 90)
-          , op.tap(e => e.stopImmediatePropagation())
-          , op.pluck('key')
-          , op.share()
-        );
+          const pam = document.getElementById('pam');
+          const pampam = document.getElementById('pampam');
+          const input$ = Rx.fromEventPattern(
+            #[span.green-dark handler => document.addEventListener('keydown', handler, true)]
+            #[span.green-dark , handler => document.removeEventListener('keydown', handler)]
+          ).pipe(
+            #[span.green-dark op.filter(() => Reveal.getCurrentSlide().getAttribute('data-capture'))]
+            #[span.green-dark , op.filter(({keyCode}) => 65 <= keyCode && keyCode <= 90)]
+            #[span.green-dark , op.tap(e => e.stopImmediatePropagation())]
+            , op.pluck('key')
+            , op.share()
+          );
 
-        input$.subscribe(key => {
-          createFadingElement(pam, key);
-        });
+          input$.subscribe(key => {
+            createFadingElement(pam, key);
+          });
 
-        input$.pipe(
-          op.bufferCount(5, 1)
-          , op.filter(buffered => buffered.join('') === 'param')
-        )
-          .subscribe(e => {
-            createFadingElement(pampam, 'PAM-PAM!');
+          input$.pipe(
+            op.bufferCount(5, 1)
+            , op.filter(buffered => buffered.join('') === 'param')
+          )
+            .subscribe(e => {
+              createFadingElement(pampam, 'PAM-PAM!');
           })
+    aside.notes
+      p ??? Actually I cheated a bit, here's real and full code To make this example work:
+      p In green code I'm taking keyboard controls away from my presentation library
+
+
+
+
+
+
+
+
+
+
+
+
