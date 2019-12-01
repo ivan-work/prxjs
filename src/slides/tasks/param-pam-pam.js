@@ -17,16 +17,14 @@ const createFadingElement = (host, text) => {
 document.addEventListener('DOMContentLoaded', (event) => {
   const pam = document.getElementById('pam');
   const pampam = document.getElementById('pampam');
-  const input$ = Rx.fromEventPattern(
-    handler => document.addEventListener('keydown', handler, true)
-    , handler => document.removeEventListener('keydown', handler)
-  ).pipe(
-    op.filter(() => Reveal.getCurrentSlide().getAttribute('data-capture'))
-    , op.filter(({keyCode}) => 65 <= keyCode && keyCode <= 90)
-    , op.tap(e => e.stopImmediatePropagation())
-    , op.pluck('key')
-    , op.share()
-  );
+  const input$ = Rx.fromEvent(document, 'keydown', true)
+    .pipe(
+      op.filter(() => Reveal.getCurrentSlide().getAttribute('data-capture'))
+      , op.filter(({keyCode}) => 65 <= keyCode && keyCode <= 90)
+      , op.tap(e => e.stopImmediatePropagation())
+      , op.pluck('key')
+      , op.share()
+    );
 
   input$.subscribe(key => {
     createFadingElement(pam, key);

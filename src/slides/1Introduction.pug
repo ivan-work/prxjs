@@ -4,15 +4,13 @@ section(
  section(data-timing=30)
   h1 Anatomy of Rx
   aside.notes
-    p Hello! Today I'd like to talk about Observables and RxJS.
-    p I hope everybody knows about it, because this is not an overview talk.
-    p Instead, I'll try to help you intuitively understand how RxJS works so you'll feel more comfortable using it.
-    p
+    p Hello! Today I'd like to talk about Observables and RxJS
+    p Here, I'll try to help you intuitively understand how RxJS works so you'll feel more comfortable using it
 
  section(data-timing=30)
   h2 Why?
   ul
-    li.fragment .map and .subscribe are fun!
+    li .map and .subscribe are fun!
     li.fragment reading this is not fun:
       code.hljs.smaller.
         Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable.
@@ -22,9 +20,10 @@ section(
         #[.right.small © .switchMapTo API documentation]
 
   aside.notes
-    p the point of this presentation is that I think it's hard to fully utilize Rx without knowledge of how it works internally
-    p 2. Yeah, it's all fine when u just .map and .subscribe
-    p 3. However reading this is not fun and I don't think marble diagrams help a lot
+    p I think it's hard to fully utilize Rx without knowledge of how it works internally
+    p Yeah, it's all fine when you're just mapping and subscribing
+    p 2. But if you'll ever need to step aside from simple logic or dare to go to documentation
+    p it could be quite difficult to handle all of Rx's power
 
  section(data-timing=30)
   h2 The plan
@@ -34,6 +33,7 @@ section(
     li.fragment Dispel some magic
   aside.notes
     p So, here's what we're going to do
-    p Short overview of what is Observable and RxJS to make sure everyone is on the same page.
+    p We're going to have a short overview of what is Observable and RxJS to make sure everyone is on the same page.
     p Next we'll look how Rx.Observable looks like in the source code
     p Explain some non-obvious behavior examples
+    p Let's go:

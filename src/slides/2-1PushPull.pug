@@ -29,18 +29,19 @@ section
        #[br]
        &nbsp;&nbsp;.then((data) => #[span.blue doSomething](data))
     aside.notes
-      p Ok, but what is the concept of Observable? Let's get back a bit and talk about push versus pull approach.
-      p #todo Ask Audience?
-      p We can split code logic to Producers and Consumers.
-      p 1. So we have a value and it flows from Producer to Consumer
+      p to understand why it is like this, let's go back a bit and talk about push and pull approach
+      p Imagine some abstract code logic
+      p We can split it to Producers parts and Consumers parts so it works like this:
+      p 1. We have some value and it flows from Producer to Consumer
       p We can make it work with two different approaches - Pull and Push.
       p 2. Pull is a traditional, imperative approach = we request or pull data when we need it
       p Producer is passive here - it produces data when requested
       p And Consumer is active - it decides when data is requested
       p 3. In Push systems, the Producer determines when to send data to the Consumer, it's Active
       p The Consumer is unaware of when it will receive that data - it's Passive
-      p Just to not confuse you - calling dataProducer() is not "requesting a data"
-       | - the point that producer determines itself whenever to call the callback, so actually it should look like this 4.
+      p.
+        And that's too simple, I want to be precise here - dataProducer() is not "requesting a data" when called - it's merely defines the producer. And that producer determines by iteself whenever to call the callback, so actually it should look like this 4.
+
       p 5. A good example of Push-based approach is a Promise
       p Ok, but what if we have not single, but multiple values?
 
@@ -54,17 +55,17 @@ section
         th: .fragment(data-fragment-index=3) Multiple
       tr
         th Pull
-        td: .fragment(data-fragment-index=1) Function#{'<value>'}
+        td Function#{'<value>'}
         td: .fragment(data-fragment-index=3) Iterator#{'<values>'}
       tr
         th Push
-        td: .fragment(data-fragment-index=2) Promise#{'<value>'}
+        td Promise#{'<value>'}
         td: .fragment(data-fragment-index=4) Observables#{'<values>'}
     aside.notes
-      p So we have here Push and Pull approaches. Let's start from single value - to do something with pull approach you have to just call function
-      p 1. In push approach you can use Promise 2.
+      p I just explained single values - in Pull it's a function call and in Push it's a promise.
       p For pulling multiple values we can use iterator
-      p And finally for pushing multiple values we can use Observables
+      p And, finally, when we want to work with multiple values via push-based approach, we may use Observables
+      p So based on this table we may define Observables as "A way to iterate over multiple values by Push approach"
 
 
 
