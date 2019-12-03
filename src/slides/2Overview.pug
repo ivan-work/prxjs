@@ -22,7 +22,7 @@ section
       p now let's look at Rx flow
 
   section
-    h2 Rx.Subject sequence
+    h2 Rx sequence
     img(src='img/Overview-RxSubject.svg')
     aside.notes
       p Here is the Rx flow and as we see - it's pretty much the same, however there's caveat.
@@ -32,9 +32,10 @@ section
       p and if we take a look at sequence with Observables instead of Subjects, it'll be not so smooth
 
   section
-    h2 Rx.Observable
+    h2 Rx.Observable sequence
     img(src='img/Overview-RxObservable.svg')
     aside.notes
       p Here is how I see it. Observables have subscription function that executes when Observer subscribes.
-      p In example if you have a button and subscribe to "click" event twice - by default Rx adds two event handlers to the button
+      p In example if you have button and make one fromEvent observable and subscribe to it twice - by default Rx adds two event handlers to the button
       p and when you actually do a click - they both fire, each for it's own observer
+      p to understand why it is like this, let's go back a bit and talk about push and pull approach

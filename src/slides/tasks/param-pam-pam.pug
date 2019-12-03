@@ -1,13 +1,12 @@
 section
   section(data-menu-title='Observables')
-    h2 What are Observables?
-    .fragment.sided-no-bg(data-fragment-index=1) Observables are the way to organize series of events
-    .fragment.replace-in-out(data-fragment-index=2).bigger
+    h3 Example
+    .fragment.replace-out(data-fragment-index=3).bigger
       +js.
         // traditional
         document.addEventListener('keydown', () =>
           console.log('Key down!'));
-        // reactive
+        // reactiveX
         Rx.Observable.fromEvent(document, 'keydown')
           .subscribe(() => console.log('Key down!'));
     .fragment.replace-in-out(data-fragment-index=3).big
@@ -45,13 +44,10 @@ section
         )#[span.blue .subscribe](keys => outputNicely('PAM PAM'))
     div(style='height:300px')
     aside.notes
-      p #todo fix + simplify colors
-      p So based on the previous table we may define Observables as "A way to iterate over multiple values by Push approach"
-      p but to make more sense, I'd say - Observables are the way to organize series of events 1.
-      p Here I'd like to address one thing - many introductions to Rx show this code 2. as example of Rx benefits
-      p I think that this is a bit misleading, because there's no real benefit or organisation going on when using Observables just to subscribe for document events
+      p Many introductions to Rx show this code as example of Rx benefits
+      p I think that this is a bit misleading, because there's no real benefit or organisation going on when you're using Observables just to
       p If i was writing introduction to observable, I'd give this code as example
-      p 3. Yes, it's a bit complicated, but here we have all the main points
+      p Yes, it's a bit more complicated, but here we have all the main points
       p 4. We actually show that we can map observables
       p 5. Also we show that with observables, we can "Organize multiple events" - if we need keypress event to do two separate things, we can do it easily
       p Let's look at this example live
@@ -74,12 +70,12 @@ section
       div#pampam
     aside.notes
       p We have same code here, and if I press some keys it'll output them: QWEQWE
-      p and we want it to out "pam pam" whenever we type 'param'
+      p and we want it to print simple "pam pam" whenever we type 'param'
       p This is not rocket science, but still quite complex behavior that we were able to achieve in seven lines of code
 
   section(data-menu-title='#todo possibly remove')
     .small
-      +js.
+      +code.
         const pam = document.getElementById('pam');
         const pampam = document.getElementById('pampam');
         const input$ = Rx.fromEvent(document, 'keydown', true)
@@ -91,20 +87,15 @@ section
             , op.share()
           );
 
-        input$.subscribe(key => {
-          createFadingElement(pam, key);
-        });
+        input$.subscribe(key => createFadingElement(pam, key));
 
         input$.pipe(
           op.bufferCount(5, 1)
           , op.filter(buffered => buffered.join('') === 'param')
-        )
-          .subscribe(e => {
-            createFadingElement(pampam, 'PAM-PAM!');
-        })
+        ).subscribe(e => createFadingElement(pampam, 'PAM-PAM!'));
     aside.notes
       p ??? Well, to be honest, I cheated a bit, here's real and full code to make this example work:
-      p In green code I'm taking keyboard controls away from my presentation library
+      p The main addition are these 3 green lines to take away keyboard control from my presentation library
 
 
 
