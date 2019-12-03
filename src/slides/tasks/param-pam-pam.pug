@@ -1,6 +1,6 @@
 section
   section(data-menu-title='Observables')
-    h3 Example
+    h3 Rx.Introduction
     .fragment.replace-out(data-fragment-index=3).bigger
       +js.
         // traditional
@@ -34,7 +34,7 @@ section
     .fragment.replace-in-out(data-fragment-index=5).big
       +js.
         const input$ = Rx.fromEvent(document, 'keydown')
-          .pipe(#[span.red pluck('key')], #[span.red share()]);
+          .pipe(pluck('key'), share());
 
         #[span.blue input$.subscribe](key => outputNicely(key));
 
@@ -45,14 +45,14 @@ section
     div(style='height:300px')
     aside.notes
       p Many introductions to Rx show this code as example of Rx benefits
-      p I think that this is a bit misleading, because there's no real benefit or organisation going on when you're using Observables just to
+      p I think that this is a bit misleading, because there's no real benefit or event organisation going on when you're using Observables just to do the same stuff
       p If i was writing introduction to observable, I'd give this code as example
       p Yes, it's a bit more complicated, but here we have all the main points
       p 4. We actually show that we can map observables
       p 5. Also we show that with observables, we can "Organize multiple events" - if we need keypress event to do two separate things, we can do it easily
       p Let's look at this example live
 
-  section(data-capture=1)
+  section(data-timing=30 data-capture=1)
     h2 Practice!
     +js.
       const input$ = Rx.fromEvent(document, 'keydown')
@@ -70,10 +70,10 @@ section
       div#pampam
     aside.notes
       p We have same code here, and if I press some keys it'll output them: QWEQWE
-      p and we want it to print simple "pam pam" whenever we type 'param'
+      p and we want it to print something whenever we type 'param'
       p This is not rocket science, but still quite complex behavior that we were able to achieve in seven lines of code
 
-  section(data-menu-title='#todo possibly remove')
+  section(data-timing=30 data-menu-title='Real code')
     .small
       +code.
         const pam = document.getElementById('pam');
@@ -95,7 +95,7 @@ section
         ).subscribe(e => createFadingElement(pampam, 'PAM-PAM!'));
     aside.notes
       p ??? Well, to be honest, I cheated a bit, here's real and full code to make this example work:
-      p The main addition are these 3 green lines to take away keyboard control from my presentation library
+      p The main addition are these three green lines to take away keyboard control from my presentation library
 
 
 

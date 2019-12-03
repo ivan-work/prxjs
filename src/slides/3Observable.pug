@@ -1,8 +1,184 @@
-section(data-menu-title='Observables')
+section
   section
-    h3 What are Observables?
-    .sided-no-bg Observables are the way to organize series of events
+    h3 Logic workflow
+    img(src='img/workflow/HumanWorkflow.svg')
     aside.notes
-      p Based on the previous slide we may define Observables as "A way to iterate over multiple values by Push approach"
-      p but to make more sense, I'd say - Observables are the way to organize series of events
-      p Here I like to address one thing:
+      p Ok, let's get back to the core.
+      p Generally, when you're using RxJS, you should be able to divide your code logic to these four steps.
+      p They could be mapped to Observable methods like this
+  section
+    h3 Logic -> Observable workflow
+    img(src='img/workflow/HumanObservableWorkflow.svg')
+    aside.notes
+      p So when you have a set of events, usually in the form of some kind of event source (or you want to create one yourself)
+      p You need to transform these events to observables and, while you usually use various methods like from, create or fromEvent
+      p They all rely to Observable constructor.
+      p Which, actually does very simple thing - it replaces observable internal default subscribe function with the provided one.
+      p That's all, but let's keep in mind - if we don't provide our own function, observable has default one. We'll get to that later
+
+      p next step is setting up various operations on events
+      p Here we use two Observable methods - pipe and, internally, lift.
+
+      p this is quite tricky part, so i'll show it closer
+  section(data-timing=180)
+    h3 operator "map()"
+    div
+      +code.
+        .pipe(map(x => x * 2))
+    .fragment.replace-in-out
+      +code.
+        .pipe(...OperatorFunctions)
+          map (projectFn: SomePureFunction): OperatorFunction
+            x => x * 2 // project function
+    .fragment.replace-in-out.small
+      +js.
+        function map (projectFn: SomePureFunction): OperatorFunction {
+          return function operatorFunction (source: Observable): Observable {
+            return source.lift(new MapOperator(projectFn))
+          }
+        }
+    .fragment.replace-in-out.small
+      +js.
+        function map (projectFn: SomePureFunction): OperatorFunction {
+          return function operatorFunction (source: Observable): Observable {
+            const operator = new MapOperator(projectFn);
+
+            // source.lift() {
+            const observable = new Observable<R>();
+            observable.source = source;
+            observable.operator = operator;
+            return observable;
+          }
+        }
+    .fragment.replace-in-out.small
+      +js.
+        function map (projectFn: SomePureFunction): OperatorFunction {
+          return function operatorFunction (source: Observable): Observable {
+            const operator = {
+              call(subscriber, source) {
+                return source.subscribe(new MapSubscriber(subscriber, projectFn))
+              }
+            };
+
+            // source.lift() {
+            const observable = new Observable<R>();
+            observable.source = source;
+            observable.operator = operator;
+            return observable;
+          }
+        }
+    .fragment.replace-in-out.small
+      +js.
+        function map (projectFn: SomePureFunction): OperatorFunction {
+          return function operatorFunction (source: Observable): Observable {
+            const operator = {
+              call(subscriber: Subscriber, source: Observable) {]
+                return source.subscribe({
+                  count: 0,
+                  next(value) {
+                    try {
+                      const result = projectFn.call(..., value, this.count++)
+                      subscriber.next(result)
+                    } catch (err) {
+                      subscriber.error(err)
+                    }
+                  }
+                })
+              }
+            };
+
+            // source.lift() {
+            const observable = new Observable<R>();
+            observable.source = source;
+            observable.operator = operator;
+            return observable;
+          }
+        }
+    .fragment.fade-in.small
+      +code.
+        function map (projectFn: SomePureFunction): OperatorFunction {
+          return function operatorFunction (source: Observable): Observable {
+            const operator = {
+              #[span.red call(subscriber: Subscriber, source: Observable) {]
+                #[span.red return source.subscribe({]
+                  #[span.red count: 0,]
+                  #[span.red next(value) {]
+                    #[span.red try {]
+                      #[span.red const result = projectFn.call(..., value, this.count++)]
+                      #[span.red subscriber.next(result)]
+                    #[span.red } catch (err) {]
+                      #[span.red subscriber.error(err)]
+                    #[span.red }]
+                  #[span.red }]
+                #[span.red })]
+              #[span.red }]
+            };
+
+            #[span.muted // source.lift() {]
+            const observable = new Observable<R>();
+            observable.source = source;
+            observable.operator = operator;
+            return observable;
+          }
+        }
+
+    aside.notes
+      p Let's review that this line does
+      p SPACE
+      p .pipe is used to avoid spoiling Observable.prototype and is just chaining all the OperatorFunctions to each other
+      p the main logic is done in map function, so we'll dive into it
+      p SPACE
+      p we see it returns operatorFunction that takes some observable and returns another one, which is result of .lift method
+      p this method is quite small helper for this code.
+      p SPACE
+      p as you see it creates new observable, but it's not the usual one - it has default internal subscribe function and has .source and .operator fields set
+      p we'll get to this later
+      p for now, let's check what is MapOperator. Actually, it is an object that emulates function behavior (it has .call method)
+      p SPACE
+      p So this function is going to be called from subscriber object and what it does is it subscribes to the source observable (the very same we're setting in the lift method) with MapSubscriber;
+      p I haven't told about subscribers yet, but basically they're Rx internal Observers who have ability to unsubscribe
+      p When you subscribe to the normal observable, your observer is wrapped into subscriber too
+      p For now you can think of it as just observer. Let me inline it too
+      p SPACE
+      p Here it is, rough inlined code of MapOperator.
+      p As you see, when called, it subscribes to the source observable - that one that comes either from previous operator or from what you've created
+      p and on every value it tries to call the function you passed to the map and then it passes the result to the given subscriber object.
+      p SPACE
+      p note that red part is going to happen when we do actual subscribe to our initial observable, so we'll get to that later.
+      p The main lesson here is that since operator functions take and returns observables, they can do almost anything, starting from subscribe action and ending with unsubscribe;
+      p and you cannot guarantee anything until you actually look in the code
+  section
+    h2 operator "crazyInterval()"
+    +js.
+      function crazyInterval(source) {
+        // ha-ha, i'm free!
+        return Rx.interval(1000);
+      }
+      const crazySubscription = Rx.Observable.create((subscriber) => {
+        console.log(`crazyObservable subscribed`);
+        subscriber.next(1);
+        subscriber.next(2);
+        setTimeout(() => subscriber.next(3), 1000);
+        subscriber.complete();
+        return () => {
+          console.log(`Unsubscribed`);
+        }
+      }).pipe(crazyInterval)
+        .subscribe((value) => console.log('Im cRaZy!'));
+    aside.notes
+      p So here have have crazyInterval operator gone rogue and completely break our observable.
+      p Once subscribed, it will continue to spam nonsense to console, ignoring everything else until you unsubscribe.
+      p Then we'll print Unsubscribe  and finally take some rest.
+      p Therefore - don't use untrusted operators and check the sources!
+      p Also, note that even this operator can't break unsubscribe function. To understand why, we should proceed to the next chapter - reaction to the values
+  section
+    h2 .subscribe()
+    img(src='img/workflow/SubscribeLogic.svg')
+    aside.notes
+      p When you call .subscribe function, anything you pass to it gets unified and transformed to the Subscriber, be it just a function to handle values or full observer.
+      p Then, it depends on the observable - if it has private .operator field it calls the red code I showed earlier with the given Subscriber
+      p If not, then it's either executes user-provided _subscribe function or tries to subscribe to source observable
+  section
+    h2 Grand scheme
+    aside.notes
+      p Here will be overall slide how everything works.

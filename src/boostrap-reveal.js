@@ -11,6 +11,7 @@ Reveal.initialize({
   slideNumber: true,
   fragmentInURL: true,
   defaultTiming: 60,
+  transition: 'fade',
   menu: {
     path: 'css/lib', // where the menu.css will be found
     // Specifies which side of the presentation the menu will
@@ -41,7 +42,7 @@ Reveal.initialize({
     // menu panel. Set to 'false' to hide themes panel.
     themes: false,
     // Specifies if the transitions menu panel will be shown.
-    transitions: true,
+    transitions: false,
     // Adds a menu button to the slides to open the menu panel.
     // Set to 'false' to hide the button.
     openButton: true,

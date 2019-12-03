@@ -1,41 +1,22 @@
 section
   section(data-menu-title="Overview")
     h2 What is ReactiveX (Rx)
-    .sided-no-bg Rx is a library for composing asynchronous and event-based programs by using observable sequences
-    br
-    ul.push-left.big
-      li Observer pattern
-      li Iterator pattern
-      li Functional Programming
+    .sided-no-bg.small ReactiveX is a library for composing asynchronous and event-based programs by using observable sequences.
+    table.small
+      tr
+        th
+        th Single
+        th Multiple
+      tr
+        th Synchronous
+        td Function#{'<value>'}
+        td Iterator#{'<values>'}
+      tr
+        th Asynchronous
+        td Promise#{'<value>'}
+        td.red Observables#{'<values>'}
     aside.notes
       p as stated on their website, Rx is a library for composing asynchronous and event-based programs by using observable sequences
-      p It's based on Observer and Iterator patterns combined with functional programming.
-      p All the very known terms, but let's take a closer look of what is Observer pattern
-  section
-    h2 Observer pattern sequence
-    p.sided-no-bg.smaller In the Observer pattern, the #[b subject] maintains a list of its dependents, called #[b observers], and notifies them automatically of any state changes
-    img(src='img/Overview-Observer.svg')
-    aside.notes
-      p Here's basic observer pattern sequence diagram I've copied from the wiki.
-      p It's pretty simple
-      p There's a subject, and two observers. They attach to the subject, then something happens and after that subject notifies them
-      p now let's look at Rx flow
-
-  section
-    h2 Rx sequence
-    img(src='img/Overview-RxSubject.svg')
-    aside.notes
-      p Here is the Rx flow and as we see - it's pretty much the same, however there's caveat.
-      p Can you spot it?
-      p ...
-      p In Rx, you mostly deal with observables. And there's no observable in this diagram, there's Subject and Observers
-      p and if we take a look at sequence with Observables instead of Subjects, it'll be not so smooth
-
-  section
-    h2 Rx.Observable sequence
-    img(src='img/Overview-RxObservable.svg')
-    aside.notes
-      p Here is how I see it. Observables have subscription function that executes when Observer subscribes.
-      p In example if you have button and make one fromEvent observable and subscribe to it twice - by default Rx adds two event handlers to the button
-      p and when you actually do a click - they both fire, each for it's own observer
-      p to understand why it is like this, let's go back a bit and talk about push and pull approach
+      p And these Observable sequences fill the gap of accessing asynchronous sequences of multiple items.
+      p They also have this handy table that helps to create right mindset
+      p let me explain it

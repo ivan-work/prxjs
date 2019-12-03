@@ -1,0 +1,57 @@
+section
+  section(data-timing=30)
+    h3 What are Observables?
+    .sided-no-bg Observables are the way to organize series of events
+    //ul.fragment.push-left.big
+    //  li Observer pattern
+    //  li Iterator pattern
+    //  li Functional Programming
+    aside.notes
+      p Based on the previous slide we may define Observables as "A way to iterate over multiple values by Push approach"
+      p but to make more sense, I'd say - Observables are the way to organize series of events
+      p Also, as name suggests it makes heavy usage of Observer pattern. Let's take a look at it:
+  section(data-timing=30)
+    h2 Observer pattern sequence
+    p.sided-no-bg.smaller In the Observer pattern, the #[b subject] maintains a list of its dependents, called #[b observers], and notifies them automatically of any state changes
+    img(src='img/Overview-Observer.svg')
+    aside.notes
+      p Here's basic observer pattern sequence diagram I've copied from the wiki.
+      p It's pretty simple
+      p There's a subject, and two observers. They attach to the subject, then something happens and after that subject notifies them
+      p now let's look at Rx flow
+
+  section(data-timing=60)
+    h2 Rx sequence
+    img(src='img/Overview-RxSubject.svg')
+    aside.notes
+      p Here is the Rx flow and as we see - it's pretty much the same, however there's a caveat
+      p Can you spot it?
+      p ...
+      p In Rx, we mostly deal with observables. And there's no observable in this diagram, there's Subject and Observers
+      p and if we take a look at sequence with Observables instead of Subjects, it won't be so smooth
+
+  section(data-timing=30)
+    h2 Rx.Observable sequence
+    img(src='img/Overview-RxObservable.svg')
+    aside.notes
+      p Here is how I see it. Observables have subscription function that executes when Observer subscribes.
+      p In example if you have button and make one fromEvent observable and subscribe to it twice - by default Rx adds two event handlers to the button
+      p and when you actually do a click - they both fire, each for it's own observer
+      p This is because Observables don't map one on one to Observer pattern - we have Subjects for it
+
+  section(data-timing=30)
+    h2 What are Rx.Observables?
+    .sided-no-bg.small Rx.Observable is a representation of any set of values over any amount of time. This is the most basic building block of RxJS
+    aside.notes
+      p So what are Observables in Rx then? That quote is taken from the source code and while it's nice to think about theoretical meaning of the first part,
+      p I find it helpful to focus on second part - it is most basic building block of Rx
+      p So, you shouldn't expect much from them and instead, build upon them to achieve what you want.
+      p Like, to fix example above I could've used .share operator, which actually uses Subject internally
+
+  section(data-timing=30 data-menu-title='Rx.Observable sequence with share')
+    img(src='img/Overview-RxObservableShare.svg')
+    aside.notes
+      p You see, now the sequence is looking good again.
+      p The point is that you need to be very clear on what you want to achieve. (as always)
+      p and know your instruments.
+      p And before we dig deeper into Rx, let me give you another example of Rx Benefits

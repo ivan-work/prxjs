@@ -22,6 +22,7 @@ import './plugins/mermaid';
 
 import * as Rx from 'rxjs';
 import * as op from 'rxjs/operators';
+import {multicast} from "rxjs/operators";
 
 const observer = (name) => ({
   next: (value) => console.log(`observer[${name}].next(${value})`),
@@ -33,11 +34,13 @@ const ob$ = Rx.Observable.create((subscriber) => {
   const id = ob$id++;
   console.log(`ott${id} subscribed`);
   subscriber.next(1);
-  subscriber.complete();
+  subscriber.next(2);
+  setTimeout(() => subscriber.next(3), 1000)
+  // subscriber.complete();
   return () => {
     console.log(`ott${id} unsubscribed`);
   }
-});
+}).pipe(op.share());
 
 const ob2$ = Rx.Observable.create((subscriber) => {
   const id = ob$id++;
@@ -48,6 +51,25 @@ const ob2$ = Rx.Observable.create((subscriber) => {
     console.log(`ott${id} unsubscribed`);
   }
 });
+
+const crazyObservable = Rx.Observable.create((subscriber) => {
+  const id = ob$id++;
+  console.log(`ott${id} subscribed`);
+  subscriber.next(1);
+  subscriber.next(2);
+  setTimeout(() => subscriber.next(3), 1000);
+  subscriber.complete();
+  return () => {
+    console.log(`ott${id} unsubscribed`);
+  }
+}).pipe(function (source) {
+  return Rx.interval(1000);
+}).subscribe(observer('crazy'));
+
+setTimeout(() => {
+  console.log('unsub');
+  crazyObservable.unsubscribe();
+}, 10e3)
 
 // ob$.source = ob2$;
 //
@@ -69,17 +91,17 @@ const ob3$ = Rx.Observable.create((subscriber) => {
     document.removeEventListener('click', handler);
   }
 });
-const subscription = ob3$.subscribe(observer('clicker'));
-const subscription2 = ob3$.subscribe(observer('double clicker'));
-
-
-let i = 0;
-document.addEventListener('click', () => {
-  console.log(i);
-  if (++i > 4) {
-    subscription.unsubscribe();
-  }
-});
+// const subscription = ob3$.subscribe(observer('clicker'));
+// const subscription2 = ob3$.subscribe(observer('double clicker'));
+//
+//
+// let i = 0;
+// document.addEventListener('click', () => {
+//   console.log(i);
+//   if (++i > 4) {
+//     subscription.unsubscribe();
+//   }
+// });
 
 // let ott$id = 0;
 // let sub$;
