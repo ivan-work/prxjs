@@ -1,7 +1,7 @@
 section
   section
     h2 Push/Pull
-    .center.fragment.replace-in-out(data-fragment-index=1): img(src='img/producer-consumer.png' width=600)
+    .center.fragment.replace-out(data-fragment-index=2): img(src='img/producer-consumer.png' width=600)
     table.smaller.fragment(data-fragment-index=2)
       tr
         th
@@ -22,17 +22,17 @@ section
           code.single-line   .onData(#[span.blue reactToData]);
         td.red Active
         td.blue Passive
-    .fragment(data-fragment-index=5).smaller
+    .fragment(data-fragment-index=5).smaller.center
       br
-      code.
-       anyPromise() #[em.muted //]#[em.red resolve()]
-       #[br]
-       &nbsp;&nbsp;.then((data) => #[span.blue doSomething](data))
+      .tab
+        code.
+         anyPromise() #[em.muted //]#[em.red resolve()]
+         #[br]
+         &nbsp;&nbsp;.then((data) => #[span.blue doSomething](data))
     aside.notes
       p to understand why it is like this, let's go back a bit and talk about push and pull approach
-      p Imagine some abstract code logic
-      p We can split it to Producers parts and Consumers parts so it works like this:
-      p 1. We have some value and it flows from Producer to Consumer
+      p Imagine some abstract code logic that we can split it to Producers parts and Consumers parts so it works like this:
+      p We have some value and it flows from Producer to Consumer
       p We can make it work with two different approaches - Pull and Push.
       p 2. Pull is a traditional, imperative approach = we request or pull data when we need it
       p Producer is passive here - it produces data when requested
@@ -40,7 +40,8 @@ section
       p 3. In Push systems, the Producer determines when to send data to the Consumer, it's Active
       p The Consumer is unaware of when it will receive that data - it's Passive
       p.
-        And that's too simple, I want to be precise here - dataProducer() is not "requesting a data" when called - it's merely defines the producer. And that producer determines by iteself whenever to call the callback, so actually it should look like this 4.
+        I want to be precise here - dataProducer() is not "requesting a data" when called - it just defines the producer.
+         And that producer determines by iteself whenever to call the callback, so actually it should look like this 4.
 
       p 5. A good example of Push-based approach is a Promise
       p Ok, but what if we have not single, but multiple values?
@@ -62,10 +63,9 @@ section
         td Promise#{'<value>'}
         td: .fragment(data-fragment-index=4) Observables#{'<values>'}
     aside.notes
-      p I just explained single values - in Pull it's a function call and in Push it's a promise.
-      p For pulling multiple values we can use iterator
+      p I've just explained single values - a function call is an example of pulling single value and promise is an example of pushing single value
+      p For pulling multiple values we can use iterator pattern - we call iterator method whenever we need next value
       p And, finally, when we want to work with multiple values via push-based approach, we may use Observables
-      p So based on this table we may define Observables as "A way to iterate over multiple values by Push approach"
 
 
 

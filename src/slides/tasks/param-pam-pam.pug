@@ -1,7 +1,7 @@
 section
-  section(data-menu-title='Observable')
-    h3 The concept of Observable
-    .fragment.sided-no-bg(data-fragment-index=1) Observables are the way of organizing series of events
+  section(data-menu-title='Observables')
+    h2 What are Observables?
+    .fragment.sided-no-bg(data-fragment-index=1) Observables are the way to organize series of events
     .fragment.replace-in-out(data-fragment-index=2).bigger
       +js.
         // traditional
@@ -10,20 +10,44 @@ section
         // reactive
         Rx.Observable.fromEvent(document, 'keydown')
           .subscribe(() => console.log('Key down!'));
-    .fragment.fade-in(data-fragment-index=3).big
+    .fragment.replace-in-out(data-fragment-index=3).big
       +js.
         const input$ = Rx.fromEvent(document, 'keydown')
-          #[.fragment.replace-in-out(data-fragment-index=3) .pipe(pluck('key'), share());]#[.fragment.replace-in(data-fragment-index=4) .pipe(#[span.red pluck('key')], #[span.red share()]);]
+          .pipe(pluck('key'), share());
 
-        #[span.fragment.replace-out(data-fragment-index=5) input$.subscribe]#[span.fragment.replace-in(data-fragment-index=5).blue input$.subscribe](key => outputNicely(key));
+        input$.subscribe(key => outputNicely(key));
 
-        #[span.fragment.replace-out(data-fragment-index=5) input$]#[span.fragment.replace-in(data-fragment-index=5).blue input$].pipe(
-          #[.fragment.replace-in-out(data-fragment-index=3) bufferCount(5, 1)]#[span.red.fragment.replace-in(data-fragment-index=4) bufferCount(5, 1)]
-          , #[.fragment.replace-in-out(data-fragment-index=3) filter(buffered => buffered.join('') === 'param')]#[span.red.fragment.replace-in(data-fragment-index=4) filter(buffered => buffered.join('') === 'param')]
-        )#[span.fragment.replace-out(data-fragment-index=5) .subscribe]#[span.fragment.replace-in(data-fragment-index=5).blue .subscribe](keys => outputNicely('PAM PAM'))
+        input$.pipe(
+          bufferCount(5, 1)
+          , filter(buffered => buffered.join('') === 'param')
+        ).subscribe(keys => outputNicely('PAM PAM'))
+    .fragment.replace-in-out(data-fragment-index=4).big
+      +js.
+        const input$ = Rx.fromEvent(document, 'keydown')
+          .pipe(#[span.red pluck('key')], #[span.red share()]);
+
+        input$.subscribe(key => outputNicely(key));
+
+        input$.pipe(
+          #[span.red bufferCount(5, 1)]
+          , #[span.red filter(buffered => buffered.join('') === 'param')]
+        ).subscribe(keys => outputNicely('PAM PAM'))
+    .fragment.replace-in-out(data-fragment-index=5).big
+      +js.
+        const input$ = Rx.fromEvent(document, 'keydown')
+          .pipe(#[span.red pluck('key')], #[span.red share()]);
+
+        #[span.blue input$.subscribe](key => outputNicely(key));
+
+        #[span.blue input$].pipe(
+          bufferCount(5, 1)
+          , filter(buffered => buffered.join('') === 'param')
+        )#[span.blue .subscribe](keys => outputNicely('PAM PAM'))
+    div(style='height:300px')
     aside.notes
       p #todo fix + simplify colors
-      p but to make more sense, I'd say - Observables are the way of organizing series of events 1.
+      p So based on the previous table we may define Observables as "A way to iterate over multiple values by Push approach"
+      p but to make more sense, I'd say - Observables are the way to organize series of events 1.
       p Here I'd like to address one thing - many introductions to Rx show this code 2. as example of Rx benefits
       p I think that this is a bit misleading, because there's no real benefit or organisation going on when using Observables just to subscribe for document events
       p If i was writing introduction to observable, I'd give this code as example
