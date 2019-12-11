@@ -1,39 +1,164 @@
-section(
-  data-menu-title="Introduction"
-)
- section(data-timing=30)
-  h1 Anatomy of Rx
-  aside.notes
-    p Hello! My name is Ivan Naimark, I'm frontend developer here in GridDynamics and today I'd like to talk about Observables and RxJS
-    p Here, I'll try to help you intuitively understand how RxJS works so you'll feel more comfortable using it
+section(data-menu-title="Introduction")
+  section(data-timing=20)
+    h1 Anatomy of RxJS
+    aside.notes
+      p Hello!
+      p My name is Ivan Naimark, I am react/nodejs developer here, at Grid Dynamics.
+      p Today I'd like to talk about RxJS.
 
- section(data-timing=30)
-  h2 Why?
-  ul
-    li .map and .subscribe are fun!
-    li.fragment reading this is not fun:
-      code.hljs.smaller.
-        Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable.
+  section(data-timing=60)
+    h2 My story
+    ul
+      li RxJava was cool&nbsp;
+        img(src='img/doge.png' height=100 valign='middle')
+      li.fragment AngularJS / React doesn't have RxJS
+      li.fragment Pet-projects
+        br
+        //img.fragment.replace-in-out(src='img/pepe.png' height=400)
+        img.fragment(src='img/stackoverflow.png' height=400)
+    //.fragment.center: img(src='img/stackoverflow.png' width=800)
+    aside.notes
+      p Let me tell you my story:
+      p So my first encounter with Rx happened when I was Android developer and it was RxJava
+      p I'm not sure what's happening in mobile right now, but back in my days it was very verbose.
+      p You were writing abstract factories of thread pools, do all the stuff imperatively, painfully switch threads, so when I went to a project with RxJava I liked it.
+      p even though it burned my brains a bit, I took a notice - wow, reactive style is cool, but hard
+      p Then I switched to javascript, learned Angualr 1 and React and kinda forgot about it.
+      p When angular 2 came out I decided to skip it because I like React. Not going to holy war, it's just me
 
-        The output Observables emits values only from the most recently emitted instance of innerObservable.
+      p However, I like to make hobby projects, like bots, games, fun stuff and usually, the logic in them is a bit more complex than in our enterprise webapps.
+      p y know, show this table, show that table, if something is wrong, blame backend :)
 
-        #[.right.small © .switchMapTo API documentation]
+      p So, for my next multiplayer game I've decided to use RxJS, because events, async stuff and I wanted actors all over the place...
+      p and then it hit me hard.
 
-  aside.notes
-    p I think it's hard to fully utilize Rx without knowledge of how it works internally
-    p Yeah, it's all fine when you're just mapping and subscribing
-    p 2. But if you'll ever need to step aside from simple logic or dare to go to documentation
-    p it could be quite difficult to handle all of Rx's power. Especially when you see new and unexplained terms like source values or innerObservables
+      p SPACE
 
- section(data-timing=30)
-  h2 The plan
-  ul.big
-    li Overview
-    li Rx.Observable structure and flow
-    li Dispel some magic
-  aside.notes
-    p So, here's what we're going to do
-    p We're going to have a short overview of what is Observable and RxJS to make sure everyone is on the same page.
-    p Next we'll look how Rx.Observable looks like in the source code
-    p And based on this I'll try to explain some non-obvious behavior examples
-    p Let's go:
+      p It was so hard to manage it and actually make it do what I want. I'm talking about logic like this - real screenshot of my question
+
+      p I won't go explaining what I'm trying to achieve here, the main point is -
+      p when I went beyond simple requests and tried to utilize all power to achieve what I want - it was hard.
+
+      p And all the online resources didn't help me - it were either introductions or, like, deep dives that even show you how to create custom operators
+      p but they were not explaining why its working and how it's happening.
+      p therefore this presentation was born - I decided to deep dive myself and go to the sources.
+
+  section(data-timing=30)
+    h2 Introductions
+    ul
+      li .maps and .subscribes are fun!
+      li.fragment .takeUntil is less fun:
+        .massive
+          +code.
+            someDataStream$.pipe(
+              takeUntil(componentUnmount$),
+              merge(Rx.fromEvent(...), Rx.fromEvent(...))
+            )
+      li.fragment reading this is not fun at all:
+        code.hljs.
+          Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable.
+
+          The output Observables emits values only from the most recently emitted instance of innerObservable.
+
+          #[.right.small © .switchMapTo API documentation]
+    aside.notes
+      p Of course, before the creating my cool system I went through intro on RxJS and read many articles
+      p but I think they all had a flaw - they were just introduction talks or talks about specific problem.
+
+      p Maybe I've searched not enough, but all of them were like - hey, dude, come to try Rx, it's fun.
+      p And you read them and say - yeah, I like that idea, managing my events in a consistent way, cool.
+
+      p But then you start using it in your project, or maybe write some kind of system about it and then I've realized I cannot use it at full power
+      p because I don't completely understand what's going on
+
+      p Again, I'm not pro and I'm sure many of you know this is a memory leak, but when you encounter things like this first time,
+        | you start researching a bit more and then then you find documentation.
+
+      p SPACE
+
+      p And then a whole new world opens are you trying to comprehend what's going on.
+      p Even when I was choosing theme for this talk, me and my collegue were sitting right there, choosing themes and I said I wanna do talk about RxJS
+      p He asked me - wait, what's so hard about RxJS? I said - oh, so you know it well, he was like - yeah.
+      p I asked him so you do know what materialize/unmaterialze operators do, he went to the docs and was sitting for like 5 minutes, murmuring
+      p I was like - ok, I may change and he was like nope.
+
+  section(data-timing=60)
+    h2 .take(0)
+    //p.center.big: b .take(0)
+    ul
+      li a) subscribes/completes/unsubscribes
+      li b) never emits, never completes
+      li.fragment.hlbg-green c) doesn't even subscribe, just completes
+    aside.notes
+      p Here's one practical point I've learned while making this:
+      p operators are pure functions and while they don't affect any upstream observable, they can do whatever they want with underlying.
+      p And therefore you need understand what they do very clear. Even if we talk about easy operators.
+      p I.e. let's look at .take operator with zero - can you tell what it does? a,b,c
+      p The answer is C, but how do you know it?
+      p Well, either you read about it somewhere outside of documentation or you go check sources.
+      p and sources look like this:
+
+  section(data-timing=30)
+    h2 .take source code
+    +code.
+      function take(count) {
+        return (source: Observable) => {
+          #[span.ahlbg-blue-w if (count === 0) {]
+            #[span.ahlbg-blue-w return empty()];
+          } else {
+            return source.lift(new TakeOperator(count));
+          }
+        };
+      }
+    .fragment
+      +code.
+        class TakeOperator<T> implements Operator<T, T> {
+          ...
+          call(subscriber: Subscriber, source: Observable) {
+            return source.subscribe(new TakeSubscriber(subscriber, this.total));
+          }
+        }
+    .fragment
+      +code.
+        class TakeSubscriber<T> extends Subscriber<T> {
+          protected #[span.ahlbg-orange _next](value: T): void {
+            ...
+            if (count <= total) {
+              this.destination.next(value);
+              if (count === total) {
+                this.destination.complete();
+                this.unsubscribe();
+              }
+            }
+          }
+        }
+    aside.notes
+      p so on creation, it checks the count and returns empty observable if you're providing 0
+      p but if it's not zero, it subscribes to the source observable and uses some kind of internal method with Take Operator
+      p SPACE
+      p This operator looks like this and all it does is subscribes to the source with Subscriber
+      p SPACE
+      p And the real stuff is being done in that subscriber which has some internal _next and destination stuff
+      p There you may stop me and say - hey, why would we need to know about internals? we don't care.
+      p But I'd answer - i think this is interesting. It will help you to understand and debug operators that you're using
+      p and it will help you to write your own operators, if you ever need one.
+
+  section(data-timing=60)
+    h2 Really small #[span.smallest intro]
+    p Observable -> cool value, nice value, happy value -> #[span.fragment(data-fragment-index=1).hlbg-red-w Observer]
+    .bigger
+      +code.
+        const observable$ = new Observable(#[span.fragment(data-fragment-index=1).hlbg-red-w subscriber] => {
+          subscriber.next(1);
+          subscriber.complete();
+        })
+
+        observable$.subscribe(#[span.fragment(data-fragment-index=1).hlbg-red-w someObserver]);
+    p.fragment Observer is an interface
+    aside.notes
+      p but, lets start from the beginning
+      p There's basic example I copied from RxJS website and there's one suspicious thing.
+      p They talk how we're going to emit values from Observable to Observer when we subscribe, but there's something not right there.
+      p I'm talking about Subscriber.
+      p There's no info about subscriber. Meanwhile, it's technically correct - RxJS doesn't have observers, all of them are converted to Subscribers
+      p And before we get lost between all these names, let's get overview of RX class diagram

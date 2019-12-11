@@ -607,9 +607,17 @@ section .fragment.fragapply:not(.visible) {
 
 
 @each $name, $color in $colorsList {
+  &.ahlbg-#{$name} {
+    background-color: $color;
+  }
+
+  &.ahlbg-#{$name}-w {
+    color: white; //$backgroundColor;
+    background-color: $color;
+  }
 
   .reveal .slides section .fragment {
-    &.highlight-#{$name} {
+    &.hl-#{$name} {
       opacity: 1;
       visibility: inherit;
 
@@ -618,7 +626,7 @@ section .fragment.fragapply:not(.visible) {
       }
     }
 
-    &.highlight-current-#{$name} {
+    &.hl-current-#{$name} {
       opacity: 1;
       visibility: inherit;
 
@@ -627,7 +635,7 @@ section .fragment.fragapply:not(.visible) {
       }
     }
 
-    &.highlight-bg-#{$name} {
+    &.hlbg-#{$name} {
       opacity: 1;
       visibility: inherit;
 
@@ -636,7 +644,7 @@ section .fragment.fragapply:not(.visible) {
       }
     }
 
-    &.highlight-bg-#{$name}-white {
+    &.hlbg-#{$name}-w {
       opacity: 1;
       visibility: inherit;
 
@@ -646,7 +654,7 @@ section .fragment.fragapply:not(.visible) {
       }
     }
 
-    &.highlight-bg-#{$name}-light {
+    &.hlbg-#{$name}-l {
       opacity: 1;
       visibility: inherit;
 
@@ -656,7 +664,7 @@ section .fragment.fragapply:not(.visible) {
       }
     }
 
-    &.highlight-current-bg-#{$name} {
+    &.hl-current-bg-#{$name} {
       opacity: 1;
       visibility: inherit;
 
@@ -665,7 +673,7 @@ section .fragment.fragapply:not(.visible) {
       }
     }
 
-    &.highlight-current-bg-#{$name}-white {
+    &.hl-current-bg-#{$name}-white {
       opacity: 1;
       visibility: inherit;
 
@@ -675,7 +683,7 @@ section .fragment.fragapply:not(.visible) {
       }
     }
 
-    &.highlight-current-bg-#{$name}-light {
+    &.hl-current-bg-#{$name}-light {
       opacity: 1;
       visibility: inherit;
 

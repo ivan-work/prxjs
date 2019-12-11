@@ -3,3 +3,29 @@ section
     li https://www.youtube.com/watch?v=j3Q32brCUAI
     li https://staltz.com/rx-glitches-arent-actually-a-problem.html // glitches
     li https://netbasal.com/understanding-rxjs-multicast-operators-77b3f60af0a2
+
+  p Примеры
+  h6 takeUntil
+  div.
+    console.clear();
+    const Rx = rxjs;
+    const op = rxjs.operators;
+    const observer = (name) => ({
+      next: (v) => console.log(`Observer[${name}].next(${v})`, v)
+    , error: (v) => console.log(`Observer[${name}].error(${v})`, v)
+    , complete: () => console.log(`Observer[${name}].complete()`)
+    });
+
+    const btn1$ = Rx.fromEvent(btn1, 'click').pipe(op.mapTo('btn1'))
+    const btn2$ = Rx.fromEvent(btn2, 'click').pipe(op.mapTo('btn2'))
+    const btn3$ = Rx.fromEvent(btn3, 'click').pipe(op.mapTo('btn3'))
+    const stop$ = Rx.fromEvent(btnStop, 'click').pipe(op.mapTo('stop'), op.tap('STOP'))
+
+    //const clicker$ = Rx.of(1,2,3).pipe(
+    //  op.merge([btn1$, btn2$, btn3])
+    //).subscribe(observer('test'))
+
+    // const clicker$ = Rx.interval(1000).pipe(
+    //   op.takeUntil(stop$)
+    //   , op.merge(btn1$, btn2$, btn3$)
+    // ).subscribe(observer('test'))
