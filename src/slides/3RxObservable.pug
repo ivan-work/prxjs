@@ -43,8 +43,9 @@ section
     h3 What that means
     ul
       //li Observable is an Object: it's either #[code.hljs {_subscribe: function}] or #[code.hljs {source: sourceObservable, operator: someOperator}]
-      li Observable is either just holding our callback or it is some kind of "operator-powered Observable"
-      li Depending on that it changes behavior when subscribing
+      li Two types of Observable:
+      li 1: Holds callback
+      li 2: "Operator Observable" - holds Operator and link to the source Observable
       li When we subscribe, we convert our Observer to Subscriber, adding state and giving ability to manage subscriptions
       li.fragment when we subscribe we get whole subscriber
         .biggest

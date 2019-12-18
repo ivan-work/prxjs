@@ -22,54 +22,53 @@ import './plugins/mermaid';
 
 import * as Rx from 'rxjs';
 import * as op from 'rxjs/operators';
-import {multicast} from "rxjs/operators";
 
-const observer = (name) => ({
-  next: (value) => console.log(`observer[${name}].next(${value})`),
-  complete: () => console.log(`observer[${name}].complete()`)
-});
-
-let ob$id = 0;
-const ob$ = Rx.Observable.create((subscriber) => {
-  const id = ob$id++;
-  console.log(`ott${id} subscribed`);
-  subscriber.next(1);
-  subscriber.next(2);
-  setTimeout(() => subscriber.next(3), 1000)
-  // subscriber.complete();
-  return () => {
-    console.log(`ott${id} unsubscribed`);
-  }
-}).pipe(op.share());
-
-const ob2$ = Rx.Observable.create((subscriber) => {
-  const id = ob$id++;
-  console.log(`ott${id} subscribed`);
-  subscriber.next(1);
-  subscriber.complete();
-  return () => {
-    console.log(`ott${id} unsubscribed`);
-  }
-});
-
-const crazyObservable = Rx.Observable.create((subscriber) => {
-  const id = ob$id++;
-  console.log(`ott${id} subscribed`);
-  subscriber.next(1);
-  subscriber.next(2);
-  setTimeout(() => subscriber.next(3), 1000);
-  subscriber.complete();
-  return () => {
-    console.log(`ott${id} unsubscribed`);
-  }
-}).pipe(function (source) {
-  return Rx.interval(1000);
-}).subscribe(observer('crazy'));
-
-setTimeout(() => {
-  console.log('unsub');
-  crazyObservable.unsubscribe();
-}, 10e3)
+// const observer = (name) => ({
+//   next: (value) => console.log(`observer[${name}].next(${value})`),
+//   complete: () => console.log(`observer[${name}].complete()`)
+// });
+//
+// let ob$id = 0;
+// const ob$ = Rx.Observable.create((subscriber) => {
+//   const id = ob$id++;
+//   console.log(`ott${id} subscribed`);
+//   subscriber.next(1);
+//   subscriber.next(2);
+//   setTimeout(() => subscriber.next(3), 1000)
+//   // subscriber.complete();
+//   return () => {
+//     console.log(`ott${id} unsubscribed`);
+//   }
+// }).pipe(op.share());
+//
+// const ob2$ = Rx.Observable.create((subscriber) => {
+//   const id = ob$id++;
+//   console.log(`ott${id} subscribed`);
+//   subscriber.next(1);
+//   subscriber.complete();
+//   return () => {
+//     console.log(`ott${id} unsubscribed`);
+//   }
+// });
+//
+// const crazyObservable = Rx.Observable.create((subscriber) => {
+//   const id = ob$id++;
+//   console.log(`ott${id} subscribed`);
+//   subscriber.next(1);
+//   subscriber.next(2);
+//   setTimeout(() => subscriber.next(3), 1000);
+//   subscriber.complete();
+//   return () => {
+//     console.log(`ott${id} unsubscribed`);
+//   }
+// }).pipe(function (source) {
+//   return Rx.interval(1000);
+// }).subscribe(observer('crazy'));
+//
+// setTimeout(() => {
+//   console.log('unsub');
+//   crazyObservable.unsubscribe();
+// }, 10e3)
 
 // ob$.source = ob2$;
 //
@@ -78,19 +77,19 @@ setTimeout(() => {
 //
 // ob$.subscribe(observer('a'));
 
-const ob3$ = Rx.Observable.create((subscriber) => {
-  const id = ob$id++;
-  console.log(`ott${id} subscribed`);
-  const handler = () => {
-    console.log(`handler of ${id} is clicked`);
-    subscriber.next(`ott${id} clicked`)
-  };
-  document.addEventListener('click', handler);
-  return () => {
-    console.log(`ott${id} unsubscribed`);
-    document.removeEventListener('click', handler);
-  }
-});
+// const ob3$ = Rx.Observable.create((subscriber) => {
+//   const id = ob$id++;
+//   console.log(`ott${id} subscribed`);
+//   const handler = () => {
+//     console.log(`handler of ${id} is clicked`);
+//     subscriber.next(`ott${id} clicked`)
+//   };
+//   document.addEventListener('click', handler);
+//   return () => {
+//     console.log(`ott${id} unsubscribed`);
+//     document.removeEventListener('click', handler);
+//   }
+// });
 // const subscription = ob3$.subscribe(observer('clicker'));
 // const subscription2 = ob3$.subscribe(observer('double clicker'));
 //

@@ -1,7 +1,15 @@
 section(data-timing=60)
   section(data-timing=60)
     h2 RxJS class diagram
-    img(src='img/interfaces1.svg')
+    svg.absolute.full
+      //rect.fragment.outline.red(style='width: 400px; height: 400px; ')
+      rect.outline.fragment.replace-in-out(x=2 y=2 width=600 height=80)
+      rect.outline.fragment.replace-in-out(x=640 y=2 width=140 height=110)
+      rect.outline.fragment.replace-in-out(x=320 y=320 width=260 height=140)
+      rect.outline.fragment.replace-in-out(x=320 y=120 width=260 height=150)
+      rect.outline.fragment.replace-in-out(x=2 y=120 width=260 height=130)
+      rect.outline.fragment.replace-in-out(x=2 y=320 width=260 height=110)
+    img.margin(src='img/interfaces1.svg')
     aside.notes
       p but, lets start from the beginning
       p There's basic example I copied from RxJS website and there's one suspicious thing.
@@ -9,14 +17,14 @@ section(data-timing=60)
       p I'm talking about Subscriber.
       p There's no info about subscriber. Meanwhile, it's technically correct - RxJS doesn't have observers, all of them are converted to Subscribers.
   section(data-timing=60)
-    h2 RxJS class diagram v2
+    h2 RxJS class diagram
+    svg.absolute.full
     img(src='img/interfaces.svg')
   section(data-timing=60)
     h2 RxJS class diagram
     ul
-      li There're 4 main types: #[b Observable], #[b Subscription], #[b Subscriber] and #[b Subject]
-      li #[b Observable] is the simplest one - just a container for subscription logic
-      li #[b Subscription] is an object with state and it can hold other Subscriptions
-      li #[b Subscriber] is the core class of RxJS, it does all the job
-      li Subscriber = Subscription + Observer
-      li #[b Subject]  is not Observable + Observer, but rather Observable + Subscriber
+      li 3 main types: #[b Observable], #[b Subscription] and #[b Subscriber]
+      li #[b Observable]: 1) container for subscription logic OR 2) "Operator Observable"
+      li #[b Subscription]: Manages unsubscription logic
+      li #[b Subscriber]: #[b Subscription] + #[b Observer], it does all the job
+      li All of them form "chains"

@@ -15,7 +15,7 @@ section(data-menu-title="Introduction")
       li.fragment Pet-projects
         br
         //img.fragment.replace-in-out(src='img/pepe.png' height=400)
-        img.fragment(src='img/stackoverflow.png' height=400)
+        img.fragment(src='img/stackoverflow.png' height=300)
     //.fragment.center: img(src='img/stackoverflow.png' width=800)
     aside.notes
       p Let me tell you my story:
@@ -115,16 +115,15 @@ section(data-menu-title="Introduction")
         class TakeOperator<T> implements Operator<T, T> {
           ...
           call(subscriber: Subscriber, source: Observable) {
-            return source.subscribe(new TakeSubscriber(subscriber, this.total));
+            return source.subscribe(#[span.fragment.hlbg-orange new TakeSubscriber](subscriber, this.total));
           }
         }
-    .fragment
       +code.
         class TakeSubscriber<T> extends Subscriber<T> {
           protected #[span.ahlbg-orange _next](value: T): void {
             ...
             if (count <= total) {
-              this.destination.next(value);
+              this.#[span.fragment.hlbg-orange destination].next(value);
               if (count === total) {
                 this.destination.complete();
                 this.unsubscribe();
@@ -154,7 +153,7 @@ section(data-menu-title="Introduction")
         })
 
         observable$.subscribe(#[span.fragment(data-fragment-index=1).hlbg-red-w someObserver]);
-    p.fragment Observer is an interface
+    p.fragment Observer is a public interface
     aside.notes
       p but, lets start from the beginning
       p There's basic example I copied from RxJS website and there's one suspicious thing.
