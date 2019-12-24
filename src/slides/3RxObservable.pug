@@ -1,23 +1,19 @@
 section
   section
     h3 Simple example
-    +code
-      div.muted //step 1
-      | const doOnUnsubscribeCallback = () => console.log(`I was unsubscribed`);
-      | const doOnSubscribeCallback = (subscriber) => {
-      |   console.log(`Help me, I was subscribed`);
-      |   subscriber.next(1);
-      |   subscriber.complete();
-      |   return doOnUnsubscribeCallback;
-      | }
-      div.muted // step 2
-      | const observable$ = new Rx.Observable(doOnSubscribeCallback);
-      div.muted.
-        //observable$ = {
-        //  _subscribe: doOnSubscribeCallback
-        //}
-      div.muted // step 3
-      | observable$.subscribe(makeObserver('John'));
+    div
+      +code
+        div.muted //step 1
+        | const doOnUnsubscribeCallback = ...
+        | const doOnSubscribeCallback = ...
+        div.muted // step 2
+        | const observable$ = new Rx.Observable(doOnSubscribeCallback);
+        div.muted.
+          //observable$ = {
+          //  _subscribe: doOnSubscribeCallback
+          //}
+        div.muted // step 3
+        | observable$.subscribe(someObserver);
     aside.notes
       p Now that you know it, let's look at simple example of Observable workflow.
       p 3 steps:
@@ -27,9 +23,8 @@ section
   section
     h3 Simple subscribe
     +code
-      | observable$.subscribe(johnTheObserver) {
-      |   const johnTheSubscriber = convertWhateverWePassIntoSubscriber(johnTheObserver)
-      |   const subscriber = new Subscriber(johnTheSubscriber)
+      | observable$.subscribe(whatever) {
+      |   const subscriber = toSubscriber(whatever)
       |   if (this.operator) { #[span.muted // this === observable$]
       div.muted     subscriber.add(operator.call(subscriber, this.source));
       |   } else {
@@ -38,17 +33,28 @@ section
       |   }
       |   return subscriber;
       | }
-    img(src='img/Subscriber.svg' width=600)
+    .fragment.replace-out
+      +js.
+        const toSubscriber = (whatever) => {
+          if (whatever instanceof Subscriber) {
+            return whatever;
+          } else {
+            return new Subscriber(whatever);
+          }
+        }
+    img.fragment.fade-in(src='img/Subscriber.svg' width=600)
   section
     h3 What that means
     ul
       //li Observable is an Object: it's either #[code.hljs {_subscribe: function}] or #[code.hljs {source: sourceObservable, operator: someOperator}]
       li Two types of Observable:
-      li 1: Holds callback
-      li 2: "Operator Observable" - holds Operator and link to the source Observable
+        br
+        | 1: Holds callback
+        br
+        | 2: "Operator Observable" - holds Operator and link to the source Observable
       li When we subscribe, we convert our Observer to Subscriber, adding state and giving ability to manage subscriptions
-      li.fragment when we subscribe we get whole subscriber
-        .biggest
+      li .subscribe returns whole Subscriber
+        .bigger.fragment
           +code.
             #[span.red // Don't try this at home!]
             const obs$ = new Rx.Observable((subscriber) => {});
@@ -56,27 +62,25 @@ section
               .subscribe((value) => console.log(`next(${value})`));
             #[span.red subscription.next('hack'); // outputs next(hack);]
   section
-    h3 Operators
+    h3 Setup with Operators
     img(src='img/workflow/operator-setup-title.svg')
-    br
-    img.fragment(src='img/workflow/operator-subscribe-title.svg')
-    //.small
-    //  ul
-    //    li what we call the Operator is just an createOperator function (.map)
-    //    h3 on setup:
-    //    li 1. #[b createOperator function] takes projectFunction (x => x) and returns #[b Operation]
-    //    li 2. #[b Operation] takes source Observable and makes that "special operator-powered Observable" by using .lift
-    //    h3 on subscribe:
-    //    li 1. #[b "operator-powered Observable"] calls #[b Operator]
-    //      .massive
-    //        +code.
-    //          #[span.muted // somewhere in observable.subscribe()...]
-    //          const {operator, source} = this; // this === observable
-    //          subscriber.add(operator.call(subscriber, source));
-    //
-    //    li 2. #[b Operator] subscribes to the source with it's own #[b OperatorSubscriber].
-    //      br
-    //      | And sets #[b OperatorSubscriber].destination to the passed subscriber;
+  section
+    h3 Subscribe with Operators
+    img(src='img/workflow/operator-subscribe-title.svg' height=200)
+    +code
+      | observable$.subscribe(whatever) {
+      |   const subscriber = toSubscriber(whatever)
+      |   if (this.operator) { #[span.muted // this === observable$]
+      div.green     subscriber.add(operator.call(subscriber, this.source));
+      |   } else {
+      div.muted ...
+    .small
+      +js.
+        class MapOperator<T> implements Operator<T, T> {
+          call(subscriber: Subscriber, source: Observable) {
+            return source.subscribe(new MapSubscriber(subscriber, ...));
+          }
+        }
   section
     h3 Operators are:
     ul
@@ -101,7 +105,6 @@ section
   section
     h3 Yay!
     ul.fragment
-      li Observables are chained through the .source field up to the #[b onSubscribe] callback
-      li #[b .subscribe] creates chain of Subscribers
-      li It's up to every #[b Subscriber] in the chain whether to call next of the #[b destination Subscriber]
-      li But every #[b destination Subscriber] holds his upstream brothers in it's subscription list to consistently unsubscribe.
+      li Observables are chained through the .source
+      li Subscribers are chained through the .destination
+      li Unsubscription logic is backward-chained through Subscribers

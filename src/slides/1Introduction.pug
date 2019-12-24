@@ -6,6 +6,9 @@ section(data-menu-title="Introduction")
       p My name is Ivan Naimark, I am react/nodejs developer here, at Grid Dynamics.
       p Today I'd like to talk about RxJS.
 
+  section
+    h2 MORE AGENDA
+
   section(data-timing=60)
     h2 My story
     ul
@@ -48,19 +51,20 @@ section(data-menu-title="Introduction")
     ul
       li .maps and .subscribes are fun!
       li.fragment .takeUntil is less fun:
-        .massive
+        .bigger
           +code.
             someDataStream$.pipe(
               takeUntil(componentUnmount$),
-              merge(Rx.fromEvent(...), Rx.fromEvent(...))
+              merge(someEvent1$, someEvent2$)
             )
       li.fragment reading this is not fun at all:
-        code.hljs.
-          Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable.
+        .small
+          code.hljs.
+            Maps each source value to the given Observable innerObservable regardless of the source value, and then flattens those resulting Observables into one single Observable, which is the output Observable.
 
-          The output Observables emits values only from the most recently emitted instance of innerObservable.
+            The output Observables emits values only from the most recently emitted instance of innerObservable.
 
-          #[.right.small © .switchMapTo API documentation]
+            #[.right.small © .switchMapTo API documentation]
     aside.notes
       p Of course, before the creating my cool system I went through intro on RxJS and read many articles
       p but I think they all had a flaw - they were just introduction talks or talks about specific problem.
@@ -84,7 +88,7 @@ section(data-menu-title="Introduction")
 
   section(data-timing=60)
     h2 .take(0)
-    //p.center.big: b .take(0)
+    p.sided Emits only the first count values emitted by the source Observable.
     ul
       li a) subscribes/completes/unsubscribes
       li b) never emits, never completes
@@ -98,8 +102,7 @@ section(data-menu-title="Introduction")
       p Well, either you read about it somewhere outside of documentation or you go check sources.
       p and sources look like this:
 
-  section(data-timing=30)
-    h2 .take source code
+  section(data-timing=30 data-menu-title='.take source code')
     +code.
       function take(count) {
         return (source: Observable) => {
@@ -110,20 +113,18 @@ section(data-menu-title="Introduction")
           }
         };
       }
-    .fragment
+    .fragment.small
       +code.
         class TakeOperator<T> implements Operator<T, T> {
-          ...
           call(subscriber: Subscriber, source: Observable) {
-            return source.subscribe(#[span.fragment.hlbg-orange new TakeSubscriber](subscriber, this.total));
+            return source.subscribe(#[span.ahlbg-orange new TakeSubscriber](subscriber, this.total));
           }
         }
       +code.
         class TakeSubscriber<T> extends Subscriber<T> {
           protected #[span.ahlbg-orange _next](value: T): void {
-            ...
             if (count <= total) {
-              this.#[span.fragment.hlbg-orange destination].next(value);
+              this.#[span.ahlbg-orange destination].next(value);
               if (count === total) {
                 this.destination.complete();
                 this.unsubscribe();
@@ -144,7 +145,12 @@ section(data-menu-title="Introduction")
 
   section(data-timing=60)
     h2 Really small #[span.smallest intro]
-    p Observable -> cool value, nice value, happy value -> #[span.fragment(data-fragment-index=1).hlbg-red-w Observer]
+    br
+    p.center.sided-no-bg Observable -> ...values... -> #[span.fragment(data-fragment-index=1).hlbg-green-w Observer]
+    br
+    .left.fragment.replace-in
+      p.sided Observer is a public interface
+      br
     .bigger
       +code.
         const observable$ = new Observable(#[span.fragment(data-fragment-index=1).hlbg-red-w subscriber] => {
@@ -152,8 +158,8 @@ section(data-menu-title="Introduction")
           subscriber.complete();
         })
 
-        observable$.subscribe(#[span.fragment(data-fragment-index=1).hlbg-red-w someObserver]);
-    p.fragment Observer is a public interface
+        observable$.subscribe(#[span.fragment(data-fragment-index=1).hlbg-green-w someObserver]);
+    br
     aside.notes
       p but, lets start from the beginning
       p There's basic example I copied from RxJS website and there's one suspicious thing.
